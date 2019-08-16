@@ -1,0 +1,15 @@
+package com.webim.im.dao;
+
+import com.webim.im.dao.custom.UserDaoCustom;
+import com.webim.im.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserDao extends JpaRepository<User,Integer>, UserDaoCustom {
+    /**
+     * @Author zw
+     * @Description  根据名称查询该用户
+     * @Date 11:05 2019/8/7
+     * @Param
+     **/
+    User findByTopic(String username);
+}
