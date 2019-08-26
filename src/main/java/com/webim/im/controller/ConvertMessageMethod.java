@@ -35,6 +35,18 @@ public class ConvertMessageMethod {
         }
         return messageBody1;
     }
+    public MessageBody updsign(MessageBody messageBody){
+        Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
+        Object userid= mapOm.get("userid");
+        Object sign= mapOm.get("sign");
+        MessageBody messageBody1=null;
+        if(userid!=null){
+            messageBody1= webUserServer.updsign(Integer.valueOf(String.valueOf(userid)),String.valueOf(sign));
+        }
+        return messageBody1;
+    }
+
+
     // 查询 不是本好友的所有用户列表
     public MessageBody getuserlist(MessageBody messageBody){
         Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
@@ -190,4 +202,5 @@ public class ConvertMessageMethod {
         }
         return  ob;
     }
+
 }

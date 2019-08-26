@@ -63,30 +63,30 @@ public class RedisReceiver {
 
     // 打开连接 并获取上线之前接收到的离线 缓存到redis 中
     public void onOpen(Session session, Integer userid) {
-        if (isUserOnline(userid)) {
-            try {
-                System.out.println("用户已登录");
-                send(session, "用户已登录");
-                session.close();
-                return;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+//        if (isUserOnline(userid)) { // todo  登录时未做判断是否已经在线
+//            try {
+//                System.out.println("用户已登录");
+//                send(session, "用户已登录");
+//                session.close();
+//                return;
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
         synchronized (list) {
             list.add(new SessionInfo(session, userid));
             System.out.println("有人上线了：" + list.size());
             stringRedisTemplate.opsForValue().setBit(UserEnum.ONLINE.toString(), userid, true);
             sendOnlineOrOffline(userid, UserEnum.ONLINE.toString());
         }
-        // 推送离线消息 以及最后一条消息信息
-        System.out.println("推送消息给前端对应的用户");
-        MessageBody messageBody= webuserServer.findUseridRecordCustom(userid,0,10);
-        try {
-            stringRedisTemplate.convertAndSend("chat", objectMapper.writeValueAsString(messageBody));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+//        // 推送离线消息 以及最后一条消息信息
+//        System.out.println("推送消息给前端对应的用户");
+//        MessageBody messageBody= webuserServer.findUseridRecordCustom(userid,0,10);
+//        try {
+//            stringRedisTemplate.convertAndSend("chat", objectMapper.writeValueAsString(messageBody));
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public void onClose(Session session) {
@@ -95,7 +95,7 @@ public class RedisReceiver {
                 SessionInfo info = list.get(i);
                 if (info.session.getId().equals(session.getId())) {
                     stringRedisTemplate.opsForValue().setBit("ONLINE", info.userid, false); //标记为不在线
-                    sendOnlineOrOffline(info.userid, "offline");
+                    sendOnlineOrOffline(info.userid, UserEnum.OFFLINE.toString());
                     list.remove(info);
                     break;
                 }
@@ -118,6 +118,7 @@ public class RedisReceiver {
     // 发送消息给前端
     public void send(Session session, String text) {
         System.out.println("发送消息");
+        
         try {
             session.getAsyncRemote().sendText(text);
         } catch (Exception e) {
@@ -128,6 +129,10 @@ public class RedisReceiver {
 
     // 判断该用户id 是否在线
     public boolean isUserOnline(Integer userid) {
+        return stringRedisTemplate.opsForValue().getBit("ONLINE", userid);
+    }
+    // 判断该用户id 是否在线
+    public boolean isUserOnline(Integer userid, Session session) {
         return stringRedisTemplate.opsForValue().getBit("ONLINE", userid);
     }
 

@@ -52,9 +52,9 @@ public class UserDaoImpl extends BaseRepository implements UserDaoCustom {
             uv.setUsername(user1.getUsername());
             // 0 为未申请   1为申请过了 状态
             if(friendsDao.existsByUserAndFriend(userDao.findOne(userid),user1)){
-                uv.setStatus(0);
-            }else{
                 uv.setStatus(1);
+            }else{
+                uv.setStatus(0);
             }
             userViewsList.add(uv);
         });

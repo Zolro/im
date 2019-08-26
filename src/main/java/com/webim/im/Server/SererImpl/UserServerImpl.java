@@ -92,25 +92,19 @@ public class UserServerImpl implements UserServer {
     }
 
     @Override
-    public Object createUser(String username, String password, String sign, MultipartFile avatar) {
-        User a= userDao.findByTopic(username);
+    public Object createUser(Integer userCenterID, String username, String sign, String imageUrl) {
+        User a= userDao.findByTopic(userCenterID);
         if(a!=null){
             return "用户名已经存在";
         }
-
         User user = new User();
-        user.setTopic(username);
+        user.setTopic(userCenterID);
         user.setUsername(username);
         user.setSign(sign);
         user.setStatus(UserEnum.ONLINE.ordinal());
         user.setCreated(new Date());
-        user.setPassword(password);
         user.setStatusexist(UserAccountEnum.normal.ordinal());
-        try {
-            //文件上传到ftp服务器
-            String name=avatar.getOriginalFilename();
-            ImageView imageView= ImageUploadUtils.upload(name,avatar);
-            user.setAvatar("http://shoestp.oss-us-west-1.aliyuncs.com"+imageView.getUrl());
+            user.setAvatar(imageUrl);
             User us=userDao.save(user);
             // 添加用户的时候默认添加分组
             Group gp=new Group();
@@ -123,10 +117,36 @@ public class UserServerImpl implements UserServer {
             data.put("code", 1);
             data.put("msg", "注册成功");
             return data;
-        } catch (Exception e) {
-            e.printStackTrace();
+    }
+    @Override
+    public User createtoUser(Integer userCenterID, String username, String sign, String imageUrl) {
+        User user = new User();
+        user.setTopic(userCenterID);
+        user.setUsername(username);
+        user.setSign(sign);
+        user.setStatus(UserEnum.ONLINE.ordinal());
+        user.setCreated(new Date());
+        user.setStatusexist(UserAccountEnum.normal.ordinal());
+            //文件上传到ftp服务器
+            user.setAvatar(imageUrl);
+            User us=userDao.save(user);
+            // 添加用户的时候默认添加分组
+            Group gp=new Group();
+            gp.setCreated(new Date());
+            gp.setGroupdelete(0);
+            gp.setName("我的好友");
+            gp.setUser(us);
+            groupDao.save(gp);
+            return user;
+    }
+
+    @Override
+    public Integer getImUserInfo(Integer userCenterID, String username) {
+       User user= userDao.findByTopic(userCenterID);
+        if(user==null){
+            user=createtoUser(userCenterID,username,"","/public/upload/usr/supplier/f1a8b40c6b5ef347fd6e453eb1eae904.jpg");
         }
-        return "error";
+        return user.getId();
     }
 
     @Override
@@ -167,8 +187,8 @@ public class UserServerImpl implements UserServer {
     }
 
     @Override
-    public User findByTopic(String username) {
-        return userDao.findByTopic(username);
+    public User findByTopic(Integer userCenterID) {
+        return userDao.findByTopic(userCenterID);
     }
 
     @Override

@@ -38,7 +38,8 @@ public class WebUserServerImpl implements WebUserServer {
 
     @Override
     public MessageBody findByTopic(String username) {
-        return packagingulrpublic(getMethodName(),convertObejctToStringTOResult(userServer.findByTopic(username)));
+ //       return packagingulrpublic(getMethodName(),convertObejctToStringTOResult(userServer.findByTopic(username)));
+        return  null;
     }
 
     @Override

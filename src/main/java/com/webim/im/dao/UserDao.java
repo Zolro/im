@@ -11,5 +11,5 @@ public interface UserDao extends JpaRepository<User,Integer>, UserDaoCustom {
      * @Date 11:05 2019/8/7
      * @Param
      **/
-    User findByTopic(String username);
+    User findByTopic(Integer userCenterID);
 }

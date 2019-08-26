@@ -46,7 +46,7 @@ public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
     public List<Record> findUserRead(Integer formuserid, Integer touserid) {
         QRecord record=QRecord.record;
         List<Record> list=new ArrayList<>();
-          queryFactory.select(record.id,record.created,record.type,record.state,record.content,record.from.id,record.to.id)
+          queryFactory.select(record.id,record.created,record.type,record.state,record.content,record.from.id,record.to.id,record.issend)
                 .from(record)
                 .where(record.from.id.eq(formuserid))
                 .where(record.to.id.eq(touserid))
@@ -54,6 +54,7 @@ public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
                 Record rd =new Record();
                 rd.setId(tuple.get(record.id));
               rd.setCreated(tuple.get(record.created));
+              rd.setIssend(tuple.get(record.issend));
               rd.setType(tuple.get(record.type));
               rd.setState(tuple.get(record.state));
               rd.setContent(tuple.get(record.content));

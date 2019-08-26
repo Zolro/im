@@ -22,7 +22,7 @@
         var userpkey = getQueryVariable("UserInfo");
         var lockReconnect = false;  //避免ws重复连接
         var ws = null;          // 判断当前浏览器是否支持WebSocket
-        var wsUrl = "ws://192.168.40.31:8080/websocket/" + userpkey;
+        var wsUrl = "ws://192.168.40.31:8080/websocket/10" ;
         createWebSocket(wsUrl);
 
         function createWebSocket(url) {

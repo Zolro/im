@@ -96,6 +96,9 @@ public class WebSocketServer { //每个人会分配一个独立的实例
                     if (map.getUrl().equals("findUseridRecordCustom")) {  // 根据用户id 显示用户好友聊天列表
                         redisReceiver.receiveMessage(convertMessageMethod.findUseridRecordCustom(map));
                     }
+                    if (map.getUrl().equals("updsign")) {  // 根据用户id  修改个性签名
+                        redisReceiver.receiveMessage(convertMessageMethod.updsign(map));
+                    }
                 }
             }
         } catch (Exception e) {
