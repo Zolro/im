@@ -4,26 +4,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webim.im.Enum.Friend.FriendsEnum;
 import com.webim.im.Enum.User.UserAccountEnum;
 import com.webim.im.Enum.User.UserEnum;
-import com.webim.im.Server.SererImpl.view.groupfriendsList;
-import com.webim.im.Server.SererImpl.view.initViews;
+import com.webim.im.Server.SererImpl.view.GroupfriendsList;
+import com.webim.im.Server.SererImpl.view.InitViews;
+import com.webim.im.Server.SererImpl.view.TemporaryUserinfo;
 import com.webim.im.Server.UserServer;
 import com.webim.im.dao.*;
 import com.webim.im.dao.custom.Views.ApplyUserListView;
 import com.webim.im.dao.custom.Views.UserViews;
 import com.webim.im.entity.*;
-import com.webim.im.utils.ImageUploadUtils;
 import com.webim.im.utils.RedisReceiver;
 import com.webim.im.utils.Result;
-import com.webim.im.view.ImageView;
 import com.webim.im.view.Page;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-import java.util.*;
+import org.springframework.web.client.RestTemplate;
 
-import javax.persistence.EntityManager;
+import java.util.*;
 
 @Service
 @Transactional
@@ -42,8 +41,10 @@ public class UserServerImpl implements UserServer {
     RedisReceiver redisReceiver;
     @Autowired
     ObjectMapper mapper;
+    @Value("${sso.domain}")
+    private String ssoDomain;
     @Autowired
-    private EntityManager entityManager;
+    RestTemplate restTemplate;
     @Override
     public Object init(Integer userid) {
 
@@ -51,7 +52,7 @@ public class UserServerImpl implements UserServer {
         if(user==null){
             return "error";
         }
-        initViews iv=new initViews();
+        InitViews iv=new InitViews();
         //个人信息
         iv.setId(user.getId());
         iv.setUsername(user.getUsername());
@@ -60,9 +61,9 @@ public class UserServerImpl implements UserServer {
         iv.setStatus(redisReceiver.isUserOnline(user.getId())? UserEnum.ONLINE.ordinal():UserEnum.OFFLINE.ordinal());
         //friend分组信息
         List<Group> groups = groupDao.findByUser(user);
-        List<groupfriendsList> groupfriendsLists=new ArrayList<>();
+        List<GroupfriendsList> groupfriendsLists=new ArrayList<>();
         groups.forEach(group -> {
-            groupfriendsList gf=new groupfriendsList();
+            GroupfriendsList gf=new GroupfriendsList();
             gf.setId(group.getId());
             gf.setName(group.getName());
             List<User> users= group.getFriends();
@@ -235,5 +236,29 @@ public class UserServerImpl implements UserServer {
     @Override
     public Page findUseridRecordCustom(Integer userid, Integer start, Integer limit) {
         return recordDao.findUseridRecordCustom(userid,start,limit);
+    }
+
+    @Override
+    public TemporaryUserinfo getSSOIdUserAndRecord(Integer formuserid,Integer topic) {
+        TemporaryUserinfo temporaryUserinfo=new TemporaryUserinfo();
+        User user=userDao.findByTopic(topic);
+        if(user ==null){
+            Map map= getuserinfo(topic);
+            Map result=(Map)map.get("result");
+            user=createtoUser(Integer.valueOf(String.valueOf(result.get("id"))),String.valueOf(result.get("nickname")),"","/public/upload/usr/supplier/f1a8b40c6b5ef347fd6e453eb1eae904.jpg");
+        }else{
+            temporaryUserinfo.setList(findUserRead(formuserid, topic));
+        }
+        temporaryUserinfo.setId(user.getId());
+        temporaryUserinfo.setAvatar(user.getAvatar());
+        temporaryUserinfo.setSign(user.getSign());
+        temporaryUserinfo.setStatus(user.getStatus());
+        temporaryUserinfo.setUsername(user.getUsername());
+        return  temporaryUserinfo;
+    }
+
+    private Map getuserinfo(Integer topic){
+        String url= ssoDomain+"/getTopicInfo/"+topic;
+        return  restTemplate.getForObject(url,Map.class);
     }
 }

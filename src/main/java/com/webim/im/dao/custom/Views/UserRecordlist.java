@@ -3,6 +3,7 @@ package com.webim.im.dao.custom.Views;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.webim.im.entity.User;
 
 import lombok.Data;
 
@@ -21,6 +22,7 @@ public class UserRecordlist {
     private Integer type; // 消息类型 文字图片 语言
     private Integer fromId;
     private Integer toId;
+    private User to;
     private Boolean state;//是否已经读取过，true代表读取过，false代表未读
     private Boolean issend;// 判断是否是接受者 还是发送者 true 代表发送者 false代表接受者
     private Integer noreadcount;// 未读还有几条信息

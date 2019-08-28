@@ -17,15 +17,47 @@ public interface WebUserServer {
      * @Param
      **/
     MessageBody findUseridRecordCustom(Integer userid, Integer start, Integer limit);
-    // 添加好友
+    /**
+     * @Author zw
+     * @Description 添加好友
+     * @Date 11:01 2019/8/28
+     * @Param
+     **/
     MessageBody getfriedns(Integer userid,Integer touserId,Integer groupiden,Integer type,String postscript);
+    /**
+     * @Author zw
+     * @Description  根据用户拉去对应的用户信息
+     * @Date 11:02 2019/8/28
+     * @Param
+     **/
     MessageBody findByTopic(String username);
-    // 获取用户列表 测试用方法
+    /**
+     * @Author zw
+     * @Description 获取用户列表
+     * @Date 11:01 2019/8/28
+     * @Param
+     **/
     MessageBody getuserlist(Integer userid);
-
-    // 根据用户id  查询收到好友申请列表
+    /**
+     * @Author zw
+     * @Description 获取SSO ID 获取用户信息 以及和对应的聊天技能
+     * @Date 11:18 2019/8/28
+     * @Param
+     **/
+    MessageBody getSSOIdUserAndRecord(Integer userid, Integer topic);
+   /**
+    * @Author zw
+    * @Description 根据用户id  查询收到好友申请列表
+    * @Date 11:01 2019/8/28
+    * @Param
+    **/
     MessageBody getapplyfriendlist(Integer userid);
-    // 修改好友申请列表
+    /**
+     * @Author zw
+     * @Description 修改好友申请列表
+     * @Date 11:02 2019/8/28
+     * @Param
+     **/
     MessageBody updApplyUser(Integer applyuserid, Integer state, String reply, Integer groupid);
     /**
      * @Author zw

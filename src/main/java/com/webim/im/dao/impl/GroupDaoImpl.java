@@ -1,9 +1,8 @@
 package com.webim.im.dao.impl;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-import com.webim.im.Server.SererImpl.view.groupfriendsList;
+import com.webim.im.Server.SererImpl.view.GroupfriendsList;
 import com.webim.im.dao.BaseRepository;
 import com.webim.im.dao.custom.GroupDaoCustom;
 import com.webim.im.entity.QFriends;
@@ -14,12 +13,12 @@ import com.webim.im.entity.User;
 public class GroupDaoImpl extends BaseRepository implements GroupDaoCustom {
 
     @Override
-    public List<groupfriendsList> findgroupfriendsList(Integer userid) {
+    public List<GroupfriendsList> findgroupfriendsList(Integer userid) {
         QFriends friends = QFriends.friends;
         QUser user = QUser.user;
         QGroup group = QGroup.group;
 
-        Map<Integer, groupfriendsList> map = new HashMap<>();
+        Map<Integer, GroupfriendsList> map = new HashMap<>();
 
         queryFactory
                 .select(
@@ -37,11 +36,11 @@ public class GroupDaoImpl extends BaseRepository implements GroupDaoCustom {
                     String groupName = tuple.get(friends.group.name);
                     Integer userId = tuple.get(friends.friend.id);
                     String username = tuple.get(friends.friend.username);
-                    groupfriendsList group2;
+                    GroupfriendsList group2;
                         if (map.containsKey(groupId)) {
                         group2 = map.get(groupId);
                     } else {
-                        group2 = new groupfriendsList();
+                        group2 = new GroupfriendsList();
                         group2.setId(groupId);
                         group2.setName(groupName);
                         group2.setList(new ArrayList<>());

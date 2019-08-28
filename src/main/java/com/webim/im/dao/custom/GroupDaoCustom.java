@@ -2,9 +2,7 @@ package com.webim.im.dao.custom;
 
 import java.util.List;
 
-import com.webim.im.Server.SererImpl.view.groupfriendsList;
-import com.webim.im.entity.Group;
-import com.webim.im.entity.User;
+import com.webim.im.Server.SererImpl.view.GroupfriendsList;
 
 /**
  * @Author zw
@@ -20,6 +18,6 @@ public interface GroupDaoCustom {
      * @Param
      **/
 
-    List<groupfriendsList> findgroupfriendsList(Integer userid);
+    List<GroupfriendsList> findgroupfriendsList(Integer userid);
 
 }

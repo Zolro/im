@@ -48,6 +48,11 @@ public class WebUserServerImpl implements WebUserServer {
     }
 
     @Override
+    public MessageBody getSSOIdUserAndRecord( Integer userid,Integer topic) {
+        return packagingulrpublic(getMethodName(),convertObejctToStringTOResult(userServer.getSSOIdUserAndRecord(userid,topic)),userid);
+    }
+
+    @Override
     public MessageBody getapplyfriendlist(Integer userid) {
         return packagingulrpublic(getMethodName(),convertObejctToStringTOResult(userServer.getapplyfriendlist(userid)),userid);
     }

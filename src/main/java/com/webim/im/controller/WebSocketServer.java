@@ -99,6 +99,10 @@ public class WebSocketServer { //每个人会分配一个独立的实例
                     if (map.getUrl().equals("updsign")) {  // 根据用户id  修改个性签名
                         redisReceiver.receiveMessage(convertMessageMethod.updsign(map));
                     }
+                    if (map.getUrl().equals("getSSOIdUserAndRecord")) {  //  单击 用户Id   去SSO ID 获取用户信息 以及和对应的聊天记录
+                        redisReceiver.receiveMessage(convertMessageMethod.getSSOIdUserAndRecord(map));
+                    }
+
                 }
             }
         } catch (Exception e) {

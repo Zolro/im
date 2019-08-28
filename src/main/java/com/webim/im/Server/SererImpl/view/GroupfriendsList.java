@@ -7,7 +7,7 @@ import com.webim.im.entity.User;
 import lombok.Data;
 
 @Data
-public class groupfriendsList {
+public class GroupfriendsList {
     private  Integer id;
     private  String name;
     private List<User> list;

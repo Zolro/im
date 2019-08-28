@@ -8,6 +8,7 @@ import com.webim.im.dao.custom.RecordDaoCustom;
 import com.webim.im.dao.custom.Views.UserRecordlist;
 import com.webim.im.entity.QRecord;
 import com.webim.im.entity.Record;
+import com.webim.im.entity.User;
 import com.webim.im.view.Page;
 
 public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
@@ -32,6 +33,12 @@ public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
             userRecordlist.setIssend(record1.getIssend());
             userRecordlist.setState(record1.getState());
             userRecordlist.setToId(record1.getToId());
+            User touser=new User();
+            User user=record1.getTo();
+            touser.setId( user.getId());
+            touser.setUsername( user.getUsername());
+            touser.setAvatar( user.getAvatar());
+            userRecordlist.setTo(touser);
             userRecordlist.setType(record1.getType());
             long num= queryFactory.select(record).from(record).where(record.to.id.eq(record1.getToId())).where(record.state.eq(false)).fetchCount();
             Integer count=Integer.valueOf(String.valueOf(num));

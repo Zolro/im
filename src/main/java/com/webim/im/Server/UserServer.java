@@ -2,6 +2,7 @@ package com.webim.im.Server;
 
 import java.util.List;
 
+import com.webim.im.Server.SererImpl.view.TemporaryUserinfo;
 import com.webim.im.dao.custom.Views.ApplyUserListView;
 import com.webim.im.dao.custom.Views.UserViews;
 import com.webim.im.entity.ApplyUser;
@@ -50,5 +51,13 @@ public interface UserServer {
      * @Param
      **/
     Page findUseridRecordCustom(Integer userid, Integer start, Integer limit);
+
+    /**
+     * @Author zw
+     * @Description    获取SSO ID 获取用户信息 以及和对应的聊天技能
+     * @Date 11:22 2019/8/28
+     * @Param formuserid 当前登录的用户信息
+     **/
+    TemporaryUserinfo getSSOIdUserAndRecord(Integer formuserid,Integer topic);
 
 }

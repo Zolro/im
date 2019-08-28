@@ -15,12 +15,10 @@ import lombok.Data;
 @Table(name="im_friends")
 public class Friends {
     @Id
-            @GeneratedValue
-            private  Integer id;
-            @ManyToOne
-            @JoinColumn(
-            name = "`user`",
-            foreignKey = @ForeignKey(name = "none",value = ConstraintMode.NO_CONSTRAINT))
+    @GeneratedValue()
+    private  Integer id;
+    @ManyToOne
+    @JoinColumn(name = "`user`", foreignKey = @ForeignKey(name = "none",value = ConstraintMode.NO_CONSTRAINT))
     private  User user; // 好友的用户 》》》关联用户
     @ManyToOne
     @JoinColumn(

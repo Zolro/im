@@ -45,8 +45,16 @@ public class ConvertMessageMethod {
         }
         return messageBody1;
     }
-
-
+    public MessageBody getSSOIdUserAndRecord(MessageBody messageBody){
+        Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
+        Object userid= mapOm.get("userid");
+        Object topic= mapOm.get("topic");
+        MessageBody messageBody1=null;
+        if(userid!=null){
+            messageBody1= webUserServer.getSSOIdUserAndRecord(Integer.valueOf(String.valueOf(userid)),Integer.valueOf(String.valueOf(topic)));
+        }
+        return messageBody1;
+    }
     // 查询 不是本好友的所有用户列表
     public MessageBody getuserlist(MessageBody messageBody){
         Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
