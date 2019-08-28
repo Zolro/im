@@ -257,6 +257,16 @@ public class UserServerImpl implements UserServer {
         return  temporaryUserinfo;
     }
 
+    @Override
+    public List<User> getlistNameUser(Integer userid, String name) {
+        return userDao.getlistUserName(userid,name);
+    }
+
+    @Override
+    public Boolean delfriendAndRecord(Integer userid, Integer friendid) {
+        return friendsDao.deleteByUserIdAndFriendId(userid,friendid);
+    }
+
     private Map getuserinfo(Integer topic){
         String url= ssoDomain+"/getTopicInfo/"+topic;
         return  restTemplate.getForObject(url,Map.class);

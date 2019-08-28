@@ -3,11 +3,7 @@ package com.webim.im.dao.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.SubQueryExpression;
-import com.querydsl.sql.SQLExpressions;
-import com.querydsl.sql.SQLQuery;
 import com.webim.im.Enum.User.UserAccountEnum;
 import com.webim.im.dao.BaseRepository;
 import com.webim.im.dao.FriendsDao;
@@ -15,6 +11,7 @@ import com.webim.im.dao.UserDao;
 import com.webim.im.dao.custom.UserDaoCustom;
 import com.webim.im.dao.custom.Views.UserViews;
 import com.webim.im.entity.QFriends;
+import com.webim.im.entity.QRecord;
 import com.webim.im.entity.QUser;
 import com.webim.im.entity.User;
 
@@ -59,5 +56,24 @@ public class UserDaoImpl extends BaseRepository implements UserDaoCustom {
             userViewsList.add(uv);
         });
         return userViewsList;
+    }
+
+    @Override
+    public List<User> getlistUserName(Integer userid, String name) {
+        QRecord record=QRecord.record;
+        QUser user=QUser.user;
+        List<Integer> list= queryFactory.select(record.toId).from(record).where(record.from.id.eq(userid)).fetch();
+        List<User> userList=new ArrayList<>();
+         queryFactory.select(user.id,user.username,user.avatar,user.sign)
+                 .from(user).where(user.id.in(list))
+                 .where(user.username.like(name)).fetch().stream().forEach(tuple -> {
+                     User user1=new User();
+             user1.setId(tuple.get(user.id));
+             user1.setAvatar(tuple.get(user.avatar));
+             user1.setUsername(tuple.get(user.username));
+             user1.setSign(tuple.get(user.sign));
+             userList.add(user1);
+         });
+        return userList;
     }
 }

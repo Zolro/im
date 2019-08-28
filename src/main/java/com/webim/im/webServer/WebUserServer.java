@@ -1,5 +1,8 @@
 package com.webim.im.webServer;
 
+import java.util.List;
+
+import com.webim.im.entity.User;
 import com.webim.im.model.MessageBody;
 import com.webim.im.view.Page;
 
@@ -24,6 +27,14 @@ public interface WebUserServer {
      * @Param
      **/
     MessageBody getfriedns(Integer userid,Integer touserId,Integer groupiden,Integer type,String postscript);
+
+    /**
+     * @Author zw
+     * @Description 查询根据名称模糊查询好友列表 或者消息列表
+     * @Date 15:52 2019/8/28
+     * @Param
+     **/
+    MessageBody getlistUserName(Integer userid, String name);
     /**
      * @Author zw
      * @Description  根据用户拉去对应的用户信息
@@ -88,4 +99,12 @@ public interface WebUserServer {
      * @Param
      **/
     String convertObejctToString(Object object);
+
+    /**
+     * @Author zw
+     * @Description  删除好友
+     * @Date 16:39 2019/8/28
+     * @Param
+     **/
+    MessageBody delfriendAndRecord(Integer userid, Integer friendid);
 }

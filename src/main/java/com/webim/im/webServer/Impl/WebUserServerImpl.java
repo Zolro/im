@@ -37,6 +37,11 @@ public class WebUserServerImpl implements WebUserServer {
     }
 
     @Override
+    public MessageBody getlistUserName(Integer userid, String name) {
+        return packagingulrpublic(getMethodName(),convertObejctToString(userServer.getlistNameUser(userid,name)),userid);
+    }
+
+    @Override
     public MessageBody findByTopic(String username) {
  //       return packagingulrpublic(getMethodName(),convertObejctToStringTOResult(userServer.findByTopic(username)));
         return  null;
@@ -82,6 +87,22 @@ public class WebUserServerImpl implements WebUserServer {
         }
         return obj;
     }
+
+    @Override
+    public MessageBody delfriendAndRecord(Integer userid, Integer friendid) {
+        if(userServer.delfriendAndRecord(userid,friendid)){
+            return packagingulrpublic(getMethodName(),  convertObejctToStringTOResult(""));
+        }else{
+            String obj=null;
+            try {
+                obj=objectMapper.writeValueAsString(Result.of(0,"失败",""));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            return packagingulrpublic(getMethodName(),obj);
+        }
+    }
+
     // 这个方法额外多了追加返回结果
     public  String convertObejctToStringTOResult(Object object){
         String obj=null;

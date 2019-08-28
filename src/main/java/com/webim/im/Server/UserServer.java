@@ -60,4 +60,20 @@ public interface UserServer {
      **/
     TemporaryUserinfo getSSOIdUserAndRecord(Integer formuserid,Integer topic);
 
+    /**
+     * @Author zw
+     * @Description 查询根据名称模糊查询好友列表 或者消息列表
+     * @Date 15:52 2019/8/28
+     * @Param
+     **/
+    List<User> getlistNameUser(Integer userid, String name);
+
+    /**
+     * @Author zw
+     * @Description  删除好友和聊天
+     * @Date 16:33 2019/8/28
+     * @Param
+     **/
+    Boolean delfriendAndRecord(Integer userid, Integer friendid);
+
 }

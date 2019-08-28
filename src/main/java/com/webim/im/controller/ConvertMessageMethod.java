@@ -50,11 +50,31 @@ public class ConvertMessageMethod {
         Object userid= mapOm.get("userid");
         Object topic= mapOm.get("topic");
         MessageBody messageBody1=null;
-        if(userid!=null){
+        if(userid==null){
+            messageBody1 =packageResult(messageBody.getReceiver(),0,"参数userid不可为空");
+        }else if(topic==null){
+            messageBody1 =packageResult(messageBody.getReceiver(),0,"参数topic不可为空");
+        }else {
             messageBody1= webUserServer.getSSOIdUserAndRecord(Integer.valueOf(String.valueOf(userid)),Integer.valueOf(String.valueOf(topic)));
         }
         return messageBody1;
     }
+    public MessageBody delfriendAndRecord(MessageBody messageBody){
+        Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
+        Object userid= mapOm.get("userid");
+        Object friendid= mapOm.get("friendid");
+        MessageBody messageBody1=null;
+        if(userid==null){
+            messageBody1 =packageResult(messageBody.getReceiver(),0,"参数userid不可为空");
+        }else if(friendid==null){
+            messageBody1 =packageResult(messageBody.getReceiver(),0,"参数friendid不可为空");
+        }else {
+            messageBody1= webUserServer.delfriendAndRecord(Integer.valueOf(String.valueOf(userid)),Integer.valueOf(String.valueOf(friendid)));
+        }
+        return messageBody1;
+    }
+
+
     // 查询 不是本好友的所有用户列表
     public MessageBody getuserlist(MessageBody messageBody){
         Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
@@ -108,6 +128,21 @@ public class ConvertMessageMethod {
         }else{
             messageBody1= webUserServer.findUseridRecordCustom(Integer.valueOf(String.valueOf(userid)
             ),Integer.valueOf(String.valueOf(start)),Integer.valueOf(String.valueOf(limit)));
+        }
+        return messageBody1;
+    }
+
+    public MessageBody getlistUserName(MessageBody messageBody){
+        Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
+        Object userid= mapOm.get("userid");
+        Object username= mapOm.get("name");
+        MessageBody messageBody1=null;
+        if(userid==null){
+            messageBody1 =packageResult(messageBody.getReceiver(),0,"userid不可为空");
+        }else if(username==null){
+            messageBody1 =packageResult(messageBody.getReceiver(),0,"name不可为空");
+        }else{
+            messageBody1= webUserServer.getlistUserName(Integer.valueOf(String.valueOf(userid)),String.valueOf(username));
         }
         return messageBody1;
     }

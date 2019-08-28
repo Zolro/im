@@ -14,9 +14,17 @@ public interface UserDaoCustom {
     List<User> findAllWhoFollwMe(Integer userid);
     /**
      * @Author zw   查询的用户列表
-     * @Description //TODO  测试用的
+     * @Description
      * @Date 16:49 2019/8/8
      * @Param
      **/
      List<UserViews> getuserlist(Integer userid);
+
+     /**
+      * @Author zw
+      * @Description  模糊查询好友信息
+      * @Date 16:04 2019/8/28
+      * @Param
+      **/
+     List<User> getlistUserName(Integer userid,String name);
 }

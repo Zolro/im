@@ -78,7 +78,7 @@ public class WebSocketServer { //每个人会分配一个独立的实例
                     if (map.getUrl().equals("init")) {
                         redisReceiver.receiveMessage(convertMessageMethod.init(map));
                     }
-                    if (map.getUrl().equals("getuserlist")) {
+                    if (map.getUrl().equals("getuserlist")) { // 测试用来 查看所有用户的 无用方法
                         redisReceiver.receiveMessage(convertMessageMethod.getuserlist(map));
                     }
                     if (map.getUrl().equals("getapplyfriendlist")) { // 获取好友申请列表
@@ -101,6 +101,12 @@ public class WebSocketServer { //每个人会分配一个独立的实例
                     }
                     if (map.getUrl().equals("getSSOIdUserAndRecord")) {  //  单击 用户Id   去SSO ID 获取用户信息 以及和对应的聊天记录
                         redisReceiver.receiveMessage(convertMessageMethod.getSSOIdUserAndRecord(map));
+                    }
+                    if (map.getUrl().equals("getlistUserName")) {  // 查询根据名称模糊查询好友列表
+                        redisReceiver.receiveMessage(convertMessageMethod.getlistUserName(map));
+                    }
+                    if (map.getUrl().equals("delfriendAndRecord")) {  // 删除好友
+                        redisReceiver.receiveMessage(convertMessageMethod.delfriendAndRecord(map));
                     }
 
                 }
