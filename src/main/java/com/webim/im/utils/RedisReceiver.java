@@ -222,22 +222,21 @@ public class RedisReceiver {
     // 判断发送对象是否在线   在线 发送则存入redis 先发送一份给用户自己
     public void isUserOnlineSendrecord(Record record, MessageBody message, Session session) {
         MessageBody messageBody = message;
-        try {
             try {
+                messageBody.setMsgtype(msgtypeEnum.response.ordinal());
+                messageBody.setCmd(cmdEnum.chat.ordinal());
+                if (isUserOnline(message.getReceiver())) {
+                    record.setIssend(!record.getIssend());
+                    messageBody.setContent(objectMapper.writeValueAsString(record));
+                    stringRedisTemplate.convertAndSend("chat", objectMapper.writeValueAsString(messageBody));
+                }
+                record.setIssend(!record.getIssend());
                 messageBody.setContent(objectMapper.writeValueAsString(record));
+                messageBody.setReceiver(messageBody.getSender());
+                stringRedisTemplate.convertAndSend("chat", objectMapper.writeValueAsString(messageBody));
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
-            messageBody.setMsgtype(msgtypeEnum.response.ordinal());
-            messageBody.setCmd(cmdEnum.chat.ordinal());
-            if (isUserOnline(message.getReceiver())) {
-                stringRedisTemplate.convertAndSend("chat", objectMapper.writeValueAsString(messageBody));
-            }
-            messageBody.setReceiver(messageBody.getSender());
-            stringRedisTemplate.convertAndSend("chat", objectMapper.writeValueAsString(messageBody));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
     }
 
     // 新增在聊天记录表中发送数据
