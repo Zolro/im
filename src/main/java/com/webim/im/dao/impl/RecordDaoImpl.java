@@ -90,14 +90,25 @@ public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
     @Override
     public Page UserRecordPage(Integer fromid, Integer toid, Integer start, Integer limit) {
         QRecord record=QRecord.record;
-        List<Record> list= null;
+        List<Record> list= new ArrayList<>();
         long num =queryFactory.select(record.id).from(record)
                 .where(record.from.id.eq(fromid))
                 .where(record.to.id.eq(toid)).fetchCount();
-        list=queryFactory.select(record).from(record)
+        queryFactory.select(record.id,record.created,record.type,record.state,record.content,record.from.id,record.to.id,record.issend).from(record)
                 .where(record.from.id.eq(fromid))
                 .where(record.to.id.eq(toid))
-                .offset(start).limit(limit).fetch();
+                .offset(start).limit(limit).fetch().forEach(tuple -> {
+                    Record rd =new Record();
+                    rd.setId(tuple.get(record.id));
+                    rd.setCreated(tuple.get(record.created));
+                    rd.setIssend(tuple.get(record.issend));
+                    rd.setType(tuple.get(record.type));
+                    rd.setState(tuple.get(record.state));
+                    rd.setContent(tuple.get(record.content));
+                    rd.setFromId(tuple.get(record.from.id));
+                    rd.setToId(tuple.get(record.to.id));
+                    list.add(rd);
+                  });
         return new Page(list,start,limit,Integer.valueOf(String.valueOf(num)));
     }
 }
