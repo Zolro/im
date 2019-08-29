@@ -211,20 +211,22 @@ public class UserServerImpl implements UserServer {
         ApplyUser applyUser= applyUserDao.findOne(applyuserid);
         applyUser.setStatus(state);
         applyUser.setReply(reply);
-         ApplyUser au= applyUserDao.save(applyUser);
+        ApplyUser au= applyUserDao.save(applyUser);
          // 给双方在好友表中添加对应的消息
-        Friends friends=new Friends();
-        friends.setUser(applyUser.getFrom());
-        friends.setFriend(applyUser.getTo());
-        Group formgroup=groupDao.findOne(applyUser.getGroupiden().getId());
-        friends.setGroup(formgroup);
-        friendsDao.save(friends);
-        Friends friendsuser=new Friends();
-        friendsuser.setUser(applyUser.getTo());
-        friendsuser.setFriend(applyUser.getFrom());
-        Group togroup=groupDao.findOne(groupid);
-        friendsuser.setGroup(togroup);
-        friendsDao.save(friendsuser);
+        if(state==1){
+            Friends friends=new Friends();
+            friends.setUser(applyUser.getFrom());
+            friends.setFriend(applyUser.getTo());
+            Group formgroup=groupDao.findOne(applyUser.getGroupiden().getId());
+            friends.setGroup(formgroup);
+            friendsDao.save(friends);
+            Friends friendsuser=new Friends();
+            friendsuser.setUser(applyUser.getTo());
+            friendsuser.setFriend(applyUser.getFrom());
+            Group togroup=groupDao.findOne(groupid);
+            friendsuser.setGroup(togroup);
+            friendsDao.save(friendsuser);
+        }
         return au;
     }
 
