@@ -15,6 +15,8 @@ import com.webim.im.entity.*;
 import com.webim.im.utils.RedisReceiver;
 import com.webim.im.utils.Result;
 import com.webim.im.view.Page;
+import com.xinlianshiye.clouds.sso.common.resource.MemberResource;
+import com.xinlianshiye.clouds.sso.common.view.Member;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -243,9 +245,8 @@ public class UserServerImpl implements UserServer {
         TemporaryUserinfo temporaryUserinfo=new TemporaryUserinfo();
         User user=userDao.findByTopic(topic);
         if(user ==null){
-            Map map= getuserinfo(topic);
-            Map result=(Map)map.get("result");
-            user=createtoUser(Integer.valueOf(String.valueOf(result.get("id"))),String.valueOf(result.get("nickname")),"","/public/upload/usr/supplier/f1a8b40c6b5ef347fd6e453eb1eae904.jpg");
+            Member map= getuserinfo(topic);
+            user=createtoUser(map.getId(),map.getNickname(),"","/public/upload/usr/supplier/f1a8b40c6b5ef347fd6e453eb1eae904.jpg");
         }else{
             temporaryUserinfo.setList(findUserRead(formuserid, topic));
         }
@@ -272,8 +273,7 @@ public class UserServerImpl implements UserServer {
         return recordDao.UserRecordPage(fromid,toid,start,limit);
     }
 
-    private Map getuserinfo(Integer topic){
-        String url= ssoDomain+"/getTopicInfo/"+topic;
-        return  restTemplate.getForObject(url,Map.class);
+    private Member getuserinfo(Integer topic){
+        return new MemberResource(ssoDomain).fetchMember(topic.toString(), null);
     }
 }
