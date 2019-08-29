@@ -20,5 +20,5 @@ public class TemporaryUserinfo {
     String  avatar;
     String  sign;
     Integer  status;
-    List<Record> list;
+    List<Record> list; //好友聊天记录
 }

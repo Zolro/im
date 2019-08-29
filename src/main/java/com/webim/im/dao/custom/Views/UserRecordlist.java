@@ -26,4 +26,5 @@ public class UserRecordlist {
     private Boolean state;//是否已经读取过，true代表读取过，false代表未读
     private Boolean issend;// 判断是否是接受者 还是发送者 true 代表发送者 false代表接受者
     private Integer noreadcount;// 未读还有几条信息
+    private Boolean existsfriends;
 }

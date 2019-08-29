@@ -6,6 +6,7 @@ import java.util.List;
 import com.webim.im.dao.BaseRepository;
 import com.webim.im.dao.custom.RecordDaoCustom;
 import com.webim.im.dao.custom.Views.UserRecordlist;
+import com.webim.im.entity.QFriends;
 import com.webim.im.entity.QRecord;
 import com.webim.im.entity.Record;
 import com.webim.im.entity.User;
@@ -15,11 +16,13 @@ public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
     @Override
     public Page findUseridRecordCustom(Integer userid,Integer start,Integer limit) {
         QRecord record=QRecord.record;
+        QFriends friends=QFriends.friends;
         List<Integer> list = queryFactory.select(record.id)
                 .from(record)
                 .where(record.from.id.eq(userid))
                 .groupBy(record.from,record.to).fetch();
         Integer recirdCount=list.size();
+
         List<Record> rd=queryFactory.select(record)
                 .from(record).where(record.id.in(list))
                 .orderBy(record.state.asc(), record.created.desc()).offset(start).limit(limit).fetch();
@@ -33,6 +36,9 @@ public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
             userRecordlist.setIssend(record1.getIssend());
             userRecordlist.setState(record1.getState());
             userRecordlist.setToId(record1.getToId());
+
+           Boolean friendsexists= queryFactory.select(friends.id).from(friends).where(friends.user.id.eq(record1.getFromId())).where(friends.friend.id.eq(record1.getToId())).fetchCount() > 0 ;
+            userRecordlist.setExistsfriends(friendsexists);
             User touser=new User();
             User user=record1.getTo();
             touser.setId( user.getId());
