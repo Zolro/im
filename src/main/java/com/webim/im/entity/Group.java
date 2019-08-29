@@ -30,7 +30,7 @@ public class Group {
     private  String name;
     private Date created;
     private Integer groupdelete; // 是否删除  0未删除 1已删除 deleteEnum
-    @OneToMany
+    @ManyToMany
     @JoinTable(name = "im_friends",joinColumns={@JoinColumn(name="`group`")},inverseJoinColumns={@JoinColumn(name="friend")})
     @JsonIgnore
     private List<User> friends;
