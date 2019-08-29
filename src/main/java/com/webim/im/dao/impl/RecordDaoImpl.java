@@ -25,7 +25,7 @@ public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
 
         List<Record> rd=queryFactory.select(record)
                 .from(record).where(record.id.in(list))
-                .orderBy(record.state.asc(), record.created.desc()).offset(start).limit(limit).fetch();
+                .orderBy(record.state.desc(), record.created.asc()).offset(start).limit(limit).fetch();
         List<UserRecordlist> listuser=new ArrayList<>();
         rd.forEach(record1 -> {
             UserRecordlist userRecordlist=new UserRecordlist();
@@ -96,7 +96,7 @@ public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
                 .where(record.to.id.eq(toid)).fetchCount();
         queryFactory.select(record.id,record.created,record.type,record.state,record.content,record.from.id,record.to.id,record.issend).from(record)
                 .where(record.from.id.eq(fromid))
-                .where(record.to.id.eq(toid)).orderBy(record.created.desc())
+                .where(record.to.id.eq(toid)).orderBy(record.created.asc())
                 .offset(start).limit(limit).fetch().forEach(tuple -> {
                     Record rd =new Record();
                     rd.setId(tuple.get(record.id));
