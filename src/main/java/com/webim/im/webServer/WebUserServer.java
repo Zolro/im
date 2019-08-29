@@ -107,4 +107,12 @@ public interface WebUserServer {
      * @Param
      **/
     MessageBody delfriendAndRecord(Integer userid, Integer friendid);
+
+    /**
+     * @Author zw
+     * @Description 好友聊天记录
+     * @Date 14:12 2019/8/29
+     * @Param
+     **/
+    MessageBody UserRecordPage(Integer fromid, Integer toid, Integer start, Integer limit);
 }

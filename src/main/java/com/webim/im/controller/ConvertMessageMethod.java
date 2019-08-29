@@ -35,6 +35,37 @@ public class ConvertMessageMethod {
         }
         return messageBody1;
     }
+    /**
+     * @Author zw
+     * @Description 好友聊天记录
+     * @Date 14:14 2019/8/29
+     * @Param
+     **/
+    public MessageBody UserRecordPage(MessageBody messageBody){
+        Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
+        Object fromid= mapOm.get("fromid");
+        Object toid= mapOm.get("toid");
+        Object start= mapOm.get("start");
+        Object limit= mapOm.get("limit");
+        MessageBody messageBody1=null;
+        if(fromid==null){
+            messageBody1 =packageResult(messageBody.getReceiver(),0,"参数fromid不可为空");
+        }else if(toid==null){
+            messageBody1 =packageResult(messageBody.getReceiver(),0,"参数toid不可为空");
+        }else if(start==null){
+            messageBody1 =packageResult(messageBody.getReceiver(),0,"参数start不可为空");
+        }else if(limit==null){
+            messageBody1 =packageResult(messageBody.getReceiver(),0,"参数limit不可为空");
+        }else{
+            Integer fromidOP= Integer.valueOf(String.valueOf(fromid));
+            Integer toidOP= Integer.valueOf(String.valueOf(toid));
+            Integer startOP= Integer.valueOf(String.valueOf(start));
+            Integer limitOP= Integer.valueOf(String.valueOf(limit));
+            messageBody1= webUserServer.UserRecordPage(fromidOP,toidOP,startOP,limitOP);
+        }
+        return messageBody1;
+    }
+
     public MessageBody updsign(MessageBody messageBody){
         Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
         Object userid= mapOm.get("userid");

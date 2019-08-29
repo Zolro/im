@@ -34,4 +34,11 @@ public interface RecordDaoCustom {
      * @Param
      **/
     void UseridRecord(Integer formuserid,Integer touserid);
+    /**
+     * @Author zw
+     * @Description   根据用户ID和好友ID 对聊天记录进行分页
+     * @Date 14:00 2019/8/29
+     * @Param
+     **/
+    Page UserRecordPage(Integer fromid,Integer toid, Integer start, Integer limit);
 }

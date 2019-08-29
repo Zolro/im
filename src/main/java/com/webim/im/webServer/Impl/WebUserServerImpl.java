@@ -103,6 +103,11 @@ public class WebUserServerImpl implements WebUserServer {
         }
     }
 
+    @Override
+    public MessageBody UserRecordPage(Integer fromid, Integer toid, Integer start, Integer limit) {
+        return packagingulrpublic( getMethodName(),convertObejctToStringTOResult(  userServer.UserRecordPage(fromid,toid,start,limit)),fromid);
+    }
+
     // 这个方法额外多了追加返回结果
     public  String convertObejctToStringTOResult(Object object){
         String obj=null;

@@ -75,5 +75,12 @@ public interface UserServer {
      * @Param
      **/
     Boolean delfriendAndRecord(Integer userid, Integer friendid);
+    /**
+     * @Author zw
+     * @Description  好友聊天记录
+     * @Date 14:10 2019/8/29
+     * @Param
+     **/
+    Page UserRecordPage(Integer fromid, Integer toid, Integer start, Integer limit);
 
 }

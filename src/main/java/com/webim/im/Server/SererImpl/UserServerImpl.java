@@ -267,6 +267,11 @@ public class UserServerImpl implements UserServer {
         return friendsDao.deleteByUserIdAndFriendId(userid,friendid);
     }
 
+    @Override
+    public Page UserRecordPage(Integer fromid, Integer toid, Integer start, Integer limit) {
+        return recordDao.UserRecordPage(fromid,toid,start,limit);
+    }
+
     private Map getuserinfo(Integer topic){
         String url= ssoDomain+"/getTopicInfo/"+topic;
         return  restTemplate.getForObject(url,Map.class);

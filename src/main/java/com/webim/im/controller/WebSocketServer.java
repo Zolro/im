@@ -108,7 +108,9 @@ public class WebSocketServer { //每个人会分配一个独立的实例
                     if (map.getUrl().equals("delfriendAndRecord")) {  // 删除好友
                         redisReceiver.receiveMessage(convertMessageMethod.delfriendAndRecord(map));
                     }
-
+                    if (map.getUrl().equals("UserRecordPage")) {  // 好友聊天记录
+                        redisReceiver.receiveMessage(convertMessageMethod.UserRecordPage(map));
+                    }
                 }
             }
         } catch (Exception e) {

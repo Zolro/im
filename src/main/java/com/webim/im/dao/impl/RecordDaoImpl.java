@@ -86,4 +86,18 @@ public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
                 .where(record.to.id.eq(touserid))
                 .where(record.state.eq(false)).execute();
     }
+
+    @Override
+    public Page UserRecordPage(Integer fromid, Integer toid, Integer start, Integer limit) {
+        QRecord record=QRecord.record;
+        List<Record> list= null;
+        long num =queryFactory.select(record.id).from(record)
+                .where(record.from.id.eq(fromid))
+                .where(record.to.id.eq(toid)).fetchCount();
+        list=queryFactory.select(record).from(record)
+                .where(record.from.id.eq(fromid))
+                .where(record.to.id.eq(toid))
+                .offset(start).limit(limit).fetch();
+        return new Page(list,start,limit,Integer.valueOf(String.valueOf(num)));
+    }
 }
