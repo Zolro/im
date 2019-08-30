@@ -40,7 +40,10 @@ public class WebUserServerImpl implements WebUserServer {
     public MessageBody getlistUserName(Integer userid, String name) {
         return packagingulrpublic(getMethodName(),convertObejctToString(userServer.getlistNameUser(userid,name)),userid);
     }
-
+    @Override
+    public MessageBody getlistUserNamefriend(Integer userid, String name) {
+        return packagingulrpublic(getMethodName(),convertObejctToString(userServer.getlistNameUser(userid,name)),userid);
+    }
     @Override
     public MessageBody findByTopic(String username) {
  //       return packagingulrpublic(getMethodName(),convertObejctToStringTOResult(userServer.findByTopic(username)));

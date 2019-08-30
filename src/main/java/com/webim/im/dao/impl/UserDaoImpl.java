@@ -76,4 +76,23 @@ public class UserDaoImpl extends BaseRepository implements UserDaoCustom {
          });
         return userList;
     }
+    @Override
+    public List<User> getlistUserNamefriend(Integer userid, String name) {
+        QRecord record=QRecord.record;
+        QFriends friends=QFriends.friends;
+        QUser user=QUser.user;
+        List<Integer> list= queryFactory.select(friends.friend.id).from(friends).where(friends.user.id.eq(userid)).fetch();
+        List<User> userList=new ArrayList<>();
+        queryFactory.select(user.id,user.username,user.avatar,user.sign)
+                .from(user).where(user.id.in(list))
+                .where(user.username.like(name)).fetch().stream().forEach(tuple -> {
+            User user1=new User();
+            user1.setId(tuple.get(user.id));
+            user1.setAvatar(tuple.get(user.avatar));
+            user1.setUsername(tuple.get(user.username));
+            user1.setSign(tuple.get(user.sign));
+            userList.add(user1);
+        });
+        return userList;
+    }
 }

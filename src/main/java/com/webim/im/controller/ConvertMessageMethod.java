@@ -178,6 +178,21 @@ public class ConvertMessageMethod {
         return messageBody1;
     }
 
+    public MessageBody getlistUserNamefriend(MessageBody messageBody){
+        Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
+        Object userid= mapOm.get("userid");
+        Object username= mapOm.get("name");
+        MessageBody messageBody1=null;
+        if(userid==null){
+            messageBody1 =packageResult(messageBody.getReceiver(),0,"userid不可为空");
+        }else if(username==null){
+            messageBody1 =packageResult(messageBody.getReceiver(),0,"name不可为空");
+        }else{
+            messageBody1= webUserServer.getlistUserNamefriend(Integer.valueOf(String.valueOf(userid)),String.valueOf(username));
+        }
+        return messageBody1;
+    }
+
     public  MessageBody updApplyUser(MessageBody messageBody){
         Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
         Object applyuserid= mapOm.get("applyuserid");

@@ -279,6 +279,10 @@ public class UserServerImpl implements UserServer {
     }
 
     @Override
+    public List<User> getlistUserNamefriend(Integer userid, String name) {
+        return userDao.getlistUserName(userid,name);
+    }
+    @Override
     public Boolean delfriendAndRecord(Integer userid, Integer friendid) {
         friendsDao.deleteByUserIdAndFriendId(userid,friendid);
         friendsDao.deleteByUserIdAndFriendId(friendid,userid);

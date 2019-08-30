@@ -30,11 +30,18 @@ public interface WebUserServer {
 
     /**
      * @Author zw
-     * @Description 查询根据名称模糊查询好友列表 或者消息列表
+     * @Description 查询根据名称模糊查询消息列表
      * @Date 15:52 2019/8/28
      * @Param
      **/
     MessageBody getlistUserName(Integer userid, String name);
+    /**
+     * @Author zw
+     * @Description 查询根据名称模糊查询好友列表
+     * @Date 15:52 2019/8/28
+     * @Param
+     **/
+    MessageBody getlistUserNamefriend(Integer userid, String name);
     /**
      * @Author zw
      * @Description  根据用户拉去对应的用户信息

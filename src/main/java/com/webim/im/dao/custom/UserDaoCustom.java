@@ -22,9 +22,17 @@ public interface UserDaoCustom {
 
      /**
       * @Author zw
-      * @Description  模糊查询好友信息
+      * @Description  模糊查询好友信息 消息列表
       * @Date 16:04 2019/8/28
       * @Param
       **/
      List<User> getlistUserName(Integer userid,String name);
+
+    /**
+     * @Author zw
+     * @Description  模糊查询好友信息 好友列表
+     * @Date 16:04 2019/8/28
+     * @Param
+     **/
+    List<User> getlistUserNamefriend(Integer userid, String name);
 }
