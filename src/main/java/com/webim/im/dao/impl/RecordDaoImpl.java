@@ -24,7 +24,7 @@ public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
         Integer recirdCount=list.size();
 
         List<Record> rd=queryFactory.select(record)
-                .from(record).where(record.id.in(list)).where(record.signdel.eq(false))
+                .from(record).where(record.id.in(list))
                 .orderBy(record.state.desc(), record.created.asc()).offset(start).limit(limit).fetch();
         List<UserRecordlist> listuser=new ArrayList<>();
         rd.forEach(record1 -> {

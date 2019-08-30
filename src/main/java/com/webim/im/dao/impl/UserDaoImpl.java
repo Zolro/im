@@ -62,7 +62,7 @@ public class UserDaoImpl extends BaseRepository implements UserDaoCustom {
     public List<User> getlistUserName(Integer userid, String name) {
         QRecord record=QRecord.record;
         QUser user=QUser.user;
-        List<Integer> list= queryFactory.select(record.toId).from(record).where(record.from.id.eq(userid)).fetch();
+        List<Integer> list= queryFactory.select(record.toId).from(record).where(record.signdel.eq(false)).where(record.from.id.eq(userid)).fetch();
         List<User> userList=new ArrayList<>();
          queryFactory.select(user.id,user.username,user.avatar,user.sign)
                  .from(user).where(user.id.in(list))
@@ -81,7 +81,7 @@ public class UserDaoImpl extends BaseRepository implements UserDaoCustom {
         QRecord record=QRecord.record;
         QFriends friends=QFriends.friends;
         QUser user=QUser.user;
-        List<Integer> list= queryFactory.select(friends.friend.id).from(friends).where(friends.user.id.eq(userid)).fetch();
+        List<Integer> list= queryFactory.select(friends.friend.id).from(friends).where(record.signdel.eq(false)).where(friends.user.id.eq(userid)).fetch();
         List<User> userList=new ArrayList<>();
         queryFactory.select(user.id,user.username,user.avatar,user.sign)
                 .from(user).where(user.id.in(list))
