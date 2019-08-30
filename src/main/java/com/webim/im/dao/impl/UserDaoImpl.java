@@ -66,7 +66,7 @@ public class UserDaoImpl extends BaseRepository implements UserDaoCustom {
         List<User> userList=new ArrayList<>();
          queryFactory.select(user.id,user.username,user.avatar,user.sign)
                  .from(user).where(user.id.in(list))
-                 .where(user.username.like(name)).fetch().stream().forEach(tuple -> {
+                 .where(user.username.like("%"+name+"%")).fetch().stream().forEach(tuple -> {
                      User user1=new User();
              user1.setId(tuple.get(user.id));
              user1.setAvatar(tuple.get(user.avatar));
@@ -81,11 +81,11 @@ public class UserDaoImpl extends BaseRepository implements UserDaoCustom {
         QRecord record=QRecord.record;
         QFriends friends=QFriends.friends;
         QUser user=QUser.user;
-        List<Integer> list= queryFactory.select(friends.friend.id).from(friends).where(record.signdel.eq(false)).where(friends.user.id.eq(userid)).groupBy(friends.friend.id).fetch();
+        List<Integer> list= queryFactory.select(friends.friend.id).from(friends).where(friends.user.id.eq(userid)).groupBy(friends.friend.id).fetch();
         List<User> userList=new ArrayList<>();
         queryFactory.select(user.id,user.username,user.avatar,user.sign)
                 .from(user).where(user.id.in(list))
-                .where(user.username.like(name)).fetch().stream().forEach(tuple -> {
+                .where(user.username.like("%"+name+"%")).fetch().stream().forEach(tuple -> {
             User user1=new User();
             user1.setId(tuple.get(user.id));
             user1.setAvatar(tuple.get(user.avatar));
