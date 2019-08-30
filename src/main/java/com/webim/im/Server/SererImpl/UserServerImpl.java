@@ -280,7 +280,7 @@ public class UserServerImpl implements UserServer {
 
     @Override
     public List<User> getlistUserNamefriend(Integer userid, String name) {
-        return userDao.getlistUserName(userid,name);
+        return userDao.getlistUserNamefriend(userid,name);
     }
     @Override
     public Boolean delfriendAndRecord(Integer userid, Integer friendid) {
