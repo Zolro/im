@@ -56,8 +56,9 @@ public class PublicController {
             ob=getuserinfo(String.valueOf(_userid_),String.valueOf(_tb_token_));
             Map<String,Map<String,Object>> map= ob;
             String name=String.valueOf(map.get("result").get("nickname"));
+            String avatar=String.valueOf(map.get("result").get("avatar"));
             Integer topic=Integer.valueOf(String.valueOf(map.get("result").get("id")));
-            Integer imuserid= userServer.getImUserInfo(topic,name);
+            Integer imuserid= userServer.getImUserInfo(topic,name,avatar);
             System.out.println("imuserid:"+imuserid);
         return  imuserid ;
         }

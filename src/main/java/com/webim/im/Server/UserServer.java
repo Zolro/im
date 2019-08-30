@@ -23,7 +23,7 @@ public interface UserServer {
      * @Date 10:41 2019/8/21
      * @Param
      **/
-    Integer getImUserInfo(Integer userCenterID, String username);
+    Integer getImUserInfo(Integer userCenterID, String username,String avatar);
     // 修改个性签名信息
     User updsign(Integer userid,String  sign);
 
