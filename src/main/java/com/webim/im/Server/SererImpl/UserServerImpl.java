@@ -270,6 +270,8 @@ public class UserServerImpl implements UserServer {
         friendsDao.deleteByUserIdAndFriendId(userid,friendid);
         friendsDao.deleteByUserIdAndFriendId(friendid,userid);
         recordDao.deleteByFromIdAndToId(userid,friendid);
+        applyUserDao.deleteByFromIdAndToId(userid,friendid);
+        applyUserDao.deleteByFromIdAndToId(friendid,userid);
         return  true;
     }
 

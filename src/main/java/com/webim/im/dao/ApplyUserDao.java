@@ -18,4 +18,12 @@ public interface ApplyUserDao  extends JpaRepository<ApplyUser,Integer>, ApplyUs
      **/
 
     Boolean existsByFromAndToAndAndStatus(User form, User to,Integer state);
+
+    /**
+     * @Author zw
+     * @Description  删除好友申请记录
+     * @Date 9:56 2019/8/30
+     * @Param
+     **/
+    Integer deleteByFromIdAndToId(Integer fromId,Integer toid);
 }
