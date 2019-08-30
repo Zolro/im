@@ -30,9 +30,15 @@ public interface UserServer {
     // 添加好友
     Object getfriedns(Integer userid,Integer touserId,Integer groupiden,Integer type,String postscript);
     User findByTopic(Integer userCenterID);
-    // 获取用户列表 测试用方法
+    // 获取用户列表
     List<UserViews> getuserlist(Integer userid);
-
+    /**
+     * @Author zw
+     * @Description 删除聊天列表中的信息  刷新下次时该条纪录则不出现在列表中
+     * @Date 14:58 2019/8/30
+     * @Param
+     **/
+    Boolean delmsglistInfo(Integer recordid);
     // 根据用户id  查询收到好友申请列表
     List<ApplyUserListView> getapplyfriendlist(Integer userid);
     // 修改好友申请列表

@@ -248,6 +248,7 @@ public class RedisReceiver {
         record.setState(true); // 判断是否读取过
         record.setIssend(true); // true 代表是发送者 false 代表接受者
         record.setCreated(new Date());
+        record.setSigndel(false);
         ContentBoby cb = null;
         try {
             cb = objectMapper.readValue(message.getContent(), ContentBoby.class);

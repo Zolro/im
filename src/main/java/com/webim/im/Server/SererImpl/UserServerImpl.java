@@ -198,7 +198,14 @@ public class UserServerImpl implements UserServer {
     public List<UserViews> getuserlist(Integer useriod ) {
         return userDao.getuserlist(useriod);
     }
-
+    @Override
+    public   Boolean delmsglistInfo(Integer recordid){
+      Record record=   recordDao.findOne(recordid);
+        if(record!=null){
+            record.setSigndel(true);
+        }
+        return  true;
+    }
     @Override
     public List<ApplyUserListView> getapplyfriendlist(Integer userid) {
         List<ApplyUserListView> getapplyfriendlist = applyUserDao.getapplyfriendlist(userid);
@@ -212,6 +219,12 @@ public class UserServerImpl implements UserServer {
         applyUser.setStatus(state);
         applyUser.setReply(reply);
         ApplyUser au= applyUserDao.save(applyUser);
+        // 如果对方也同时申请了好友 需同时也修改对应的值
+        ApplyUser ObapplyUser=applyUserDao.findByFromAndTo(applyUser.getTo(),applyUser.getFrom());
+        if(ObapplyUser!=null){
+            ObapplyUser.setStatus(state);
+            applyUserDao.save(ObapplyUser);
+        }
          // 给双方在好友表中添加对应的消息
         if(state==1){
             Friends friends=new Friends();

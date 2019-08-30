@@ -15,12 +15,13 @@ public class ApplyUserDaoImpl extends BaseRepository implements ApplyUserDaoCust
         QApplyUser applyUser=QApplyUser.applyUser;
         List<ApplyUserListView> list= new ArrayList<>();
                 queryFactory.select(applyUser.id,applyUser.status,
-                applyUser.createtime,applyUser.from.id,applyUser.from.username,applyUser.type,applyUser.postscript)
+                applyUser.createtime,applyUser.from.id,applyUser.from.username,applyUser.from.avatar,applyUser.type,applyUser.postscript)
                 .from(applyUser).where(applyUser.to.id.eq(userid)).fetch()
                         .stream().forEach(tuple -> {
                     ApplyUserListView au=new ApplyUserListView();
                     au.setId(tuple.get(applyUser.id));
                     au.setStatus(tuple.get(applyUser.status));
+                    au.setAvatar(tuple.get(applyUser.from.avatar));
                     au.setCreatetime(tuple.get(applyUser.createtime));
                     au.setFromid(tuple.get(applyUser.from.id));
                     au.setFromusername(tuple.get(applyUser.from.username));

@@ -26,4 +26,12 @@ public interface ApplyUserDao  extends JpaRepository<ApplyUser,Integer>, ApplyUs
      * @Param
      **/
     Integer deleteByFromIdAndToId(Integer fromId,Integer toid);
+
+    /**
+     * @Author zw
+     * @Description 根据用户ID和好友ID 查询申请记录
+     * @Date 14:31 2019/8/30
+     * @Param
+     **/
+    ApplyUser findByFromAndTo(User from,User to);
 }
