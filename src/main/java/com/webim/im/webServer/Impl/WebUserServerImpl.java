@@ -91,7 +91,7 @@ public class WebUserServerImpl implements WebUserServer {
     @Override
     public MessageBody delfriendAndRecord(Integer userid, Integer friendid) {
         if(userServer.delfriendAndRecord(userid,friendid)){
-            return packagingulrpublic(getMethodName(),  convertObejctToStringTOResult(""));
+            return packagingulrpublic(getMethodName(),  convertObejctToStringTOResult(""),userid);
         }else{
             String obj=null;
             try {
