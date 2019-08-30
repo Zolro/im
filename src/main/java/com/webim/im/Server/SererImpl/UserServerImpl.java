@@ -147,7 +147,7 @@ public class UserServerImpl implements UserServer {
     public Integer getImUserInfo(Integer userCenterID, String username ,String avatar) {
        User user= userDao.findByTopic(userCenterID);
         if(user==null){
-            if(avatar!=""||avatar!=null||!"null".equals(avatar)){
+            if(avatar!=""&avatar!=null&!"null".equals(avatar)){
                 user=createtoUser(userCenterID,username,"",avatar);
             }else{
                 user=createtoUser(userCenterID,username,"","/public/upload/usr/supplier/f1a8b40c6b5ef347fd6e453eb1eae904.jpg");
