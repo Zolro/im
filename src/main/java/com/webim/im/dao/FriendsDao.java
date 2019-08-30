@@ -14,5 +14,5 @@ public interface FriendsDao extends JpaRepository<Friends,Integer> {
      * @Date 16:37 2019/8/28
      * @Param
      **/
-    Boolean deleteByUserIdAndFriendId(Integer userid,Integer friends);
+    Integer deleteByUserIdAndFriendId(Integer userid,Integer friends);
 }

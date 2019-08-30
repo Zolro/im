@@ -267,7 +267,10 @@ public class UserServerImpl implements UserServer {
 
     @Override
     public Boolean delfriendAndRecord(Integer userid, Integer friendid) {
-        return friendsDao.deleteByUserIdAndFriendId(userid,friendid);
+        if(friendsDao.deleteByUserIdAndFriendId(userid,friendid)>0){
+            return  true;
+        }
+        return  false;
     }
 
     @Override
