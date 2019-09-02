@@ -268,6 +268,7 @@ public class RedisReceiver {
         torecord.setCreated(new Date());
         torecord.setContent(cb.getContent());
         torecord.setType(cb.getType());
+        torecord.setSigndel(false);
         recordDao.save(torecord);
         return record;
     }
