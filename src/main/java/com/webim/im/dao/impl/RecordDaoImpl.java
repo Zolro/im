@@ -24,7 +24,7 @@ public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
            List<Integer> con= queryFactory.select(record.id)
                     .from(record)
                     .where(record.toId.eq(tuple.get(record.toId)))
-                    .where(record.created.eq(tuple.get(record.created))).fetch();
+                    .where(record.created.eq(tuple.get(record.created.max()))).fetch();
            con.forEach(tuple1->{
                list.add(tuple1);
            });
