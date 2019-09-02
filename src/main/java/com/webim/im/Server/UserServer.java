@@ -95,4 +95,12 @@ public interface UserServer {
      **/
     Page UserRecordPage(Integer fromid, Integer toid, Integer start, Integer limit);
 
+    /**
+     * @Author zw
+     * @Description  修改消息状态为已读
+     * @Date 11:03 2019/9/2
+     * @Param
+     **/
+    Boolean UseridRecord(Integer userid, Integer friendid);
+
 }

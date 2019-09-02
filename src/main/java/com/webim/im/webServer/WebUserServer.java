@@ -129,4 +129,12 @@ public interface WebUserServer {
      * @Param
      **/
     MessageBody delmsglistInfo(Integer fromid,Integer recordid);
+
+    /**
+     * @Author zw
+     * @Description 修改信息内容为已读
+     * @Date 11:06 2019/9/2
+     * @Param
+     **/
+    MessageBody UseridRecord(Integer userid, Integer friendid);
 }

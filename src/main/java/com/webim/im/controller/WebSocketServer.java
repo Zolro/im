@@ -117,6 +117,10 @@ public class WebSocketServer { //每个人会分配一个独立的实例
                     if (map.getUrl().equals("delmsglistInfo")) {  // 删除好友消息后 下次刷新不在出现在列表中
                         redisReceiver.receiveMessage(convertMessageMethod.delmsglistInfo(map));
                     }
+                    if (map.getUrl().equals("UseridRecord")) {  // 删除好友消息后 下次刷新不在出现在列表中
+                        redisReceiver.receiveMessage(convertMessageMethod.UseridRecord(map));
+                    }
+
                 }
             }
         } catch (Exception e) {

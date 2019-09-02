@@ -301,6 +301,12 @@ public class UserServerImpl implements UserServer {
         return recordDao.UserRecordPage(fromid,toid,start,limit);
     }
 
+    @Override
+    public Boolean UseridRecord(Integer userid, Integer friendid) {
+        recordDao.UseridRecord ( userid, friendid);
+        return  true;
+    }
+
     private Member getuserinfo(Integer topic){
         return new MemberResource(ssoDomain).fetchMember(topic.toString(), null);
     }

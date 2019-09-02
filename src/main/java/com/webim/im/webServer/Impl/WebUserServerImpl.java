@@ -116,6 +116,11 @@ public class WebUserServerImpl implements WebUserServer {
         return  packagingulrpublic( getMethodName(),convertObejctToStringTOResult(  userServer.delmsglistInfo(recordid)),fromid);
     }
 
+    @Override
+    public MessageBody UseridRecord(Integer userid, Integer friendid) {
+        return  packagingulrpublic( getMethodName(),convertObejctToStringTOResult(  userServer.UseridRecord(userid,friendid)),userid);
+    }
+
     // 这个方法额外多了追加返回结果
     public  String convertObejctToStringTOResult(Object object){
         String obj=null;

@@ -191,6 +191,20 @@ public class ConvertMessageMethod {
         }
         return messageBody1;
     }
+    public MessageBody UseridRecord(MessageBody messageBody){
+        Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
+        Object userid= mapOm.get("userid");
+        Object friendid= mapOm.get("friendid");
+        MessageBody messageBody1=null;
+        if(userid==null){
+            messageBody1 =packageResult(messageBody.getReceiver(),0,"userid不可为空");
+        }else if(friendid==null){
+            messageBody1 =packageResult(messageBody.getReceiver(),0,"friendid不可为空");
+        }else{
+            messageBody1= webUserServer.UseridRecord(Integer.valueOf(String.valueOf(userid)),Integer.valueOf(String.valueOf(friendid)));
+        }
+        return messageBody1;
+    }
     public MessageBody getlistUserNamefriend(MessageBody messageBody){
         Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
         Object userid= mapOm.get("userid");
