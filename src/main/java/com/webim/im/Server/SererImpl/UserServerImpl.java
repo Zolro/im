@@ -208,7 +208,7 @@ public class UserServerImpl implements UserServer {
         if(record!=null){
             record.setSigndel(true);
         }
-        return  true;
+        return  false;
     }
     @Override
     public List<ApplyUserListView> getapplyfriendlist(Integer userid) {

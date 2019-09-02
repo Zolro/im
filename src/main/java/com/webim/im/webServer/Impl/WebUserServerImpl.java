@@ -42,7 +42,7 @@ public class WebUserServerImpl implements WebUserServer {
     }
     @Override
     public MessageBody getlistUserNamefriend(Integer userid, String name) {
-        return packagingulrpublic(getMethodName(),convertObejctToString(userServer.getlistNameUser(userid,name)),userid);
+        return packagingulrpublic(getMethodName(),convertObejctToString(userServer.getlistUserNamefriend(userid,name)),userid);
     }
     @Override
     public MessageBody findByTopic(String username) {
@@ -109,6 +109,11 @@ public class WebUserServerImpl implements WebUserServer {
     @Override
     public MessageBody UserRecordPage(Integer fromid, Integer toid, Integer start, Integer limit) {
         return packagingulrpublic( getMethodName(),convertObejctToStringTOResult(  userServer.UserRecordPage(fromid,toid,start,limit)),fromid);
+    }
+
+    @Override
+    public MessageBody delmsglistInfo(Integer fromid,Integer recordid) {
+        return  packagingulrpublic( getMethodName(),convertObejctToStringTOResult(  userServer.delmsglistInfo(recordid)),fromid);
     }
 
     // 这个方法额外多了追加返回结果

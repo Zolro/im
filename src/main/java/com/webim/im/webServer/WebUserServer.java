@@ -122,4 +122,11 @@ public interface WebUserServer {
      * @Param
      **/
     MessageBody UserRecordPage(Integer fromid, Integer toid, Integer start, Integer limit);
+    /**
+     * @Author zw
+     * @Description 关闭聊天信息
+     * @Date 9:54 2019/9/2
+     * @Param
+     **/
+    MessageBody delmsglistInfo(Integer fromid,Integer recordid);
 }

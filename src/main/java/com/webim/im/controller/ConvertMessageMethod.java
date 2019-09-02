@@ -177,7 +177,20 @@ public class ConvertMessageMethod {
         }
         return messageBody1;
     }
-
+    public MessageBody delmsglistInfo(MessageBody messageBody) {
+        Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
+        Object fromid= mapOm.get("fromid");
+        Object recordid= mapOm.get("recordid");
+        MessageBody messageBody1=null;
+        if(fromid==null){
+            messageBody1 =packageResult(messageBody.getReceiver(),0,"fromid不可为空");
+        }else if(recordid==null){
+            messageBody1 =packageResult(messageBody.getReceiver(),0,"recordid不可为空");
+        }else{
+            messageBody1= webUserServer.delmsglistInfo(Integer.valueOf(String.valueOf(fromid)),Integer.valueOf(String.valueOf(recordid)));
+        }
+        return messageBody1;
+    }
     public MessageBody getlistUserNamefriend(MessageBody messageBody){
         Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
         Object userid= mapOm.get("userid");
