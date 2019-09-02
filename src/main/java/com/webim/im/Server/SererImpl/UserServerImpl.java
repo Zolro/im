@@ -207,6 +207,8 @@ public class UserServerImpl implements UserServer {
       Record record=   recordDao.findOne(recordid);
         if(record!=null){
             record.setSigndel(true);
+            recordDao.saveAndFlush(record);
+            return true;
         }
         return  false;
     }
