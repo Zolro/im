@@ -17,15 +17,15 @@ public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
     public Page findUseridRecordCustom(Integer userid,Integer start,Integer limit) {
         QRecord record=QRecord.record;
         QFriends friends=QFriends.friends;
-        List<Integer> list = queryFactory.select(record.id)
+        List<Integer> list = queryFactory.select(record.toId)
                 .from(record)
-                .where(record.from.id.eq(userid))
-                .groupBy(record.from,record.to).fetch();
+                .where(record.from.id.eq(userid)).orderBy(record.created.desc())
+                .groupBy(record.to).fetch();
         Integer recirdCount=list.size();
 
         List<Record> rd=queryFactory.select(record)
-                .from(record).where(record.id.in(list)).where(record.signdel.eq(false))
-                .orderBy(record.state.desc(), record.created.asc()).offset(start).limit(limit).fetch();
+                .from(record).where(record.toId.in(list)).where(record.signdel.eq(false))
+                .orderBy(record.state.desc(), record.created.desc()).offset(start).limit(limit).fetch();
         List<UserRecordlist> listuser=new ArrayList<>();
         rd.forEach(record1 -> {
             UserRecordlist userRecordlist=new UserRecordlist();
