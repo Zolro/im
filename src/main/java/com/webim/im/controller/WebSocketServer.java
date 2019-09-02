@@ -122,6 +122,9 @@ public class WebSocketServer { //每个人会分配一个独立的实例
                     }
 
                 }
+                if (map.getCmd() == cmdEnum.ping.ordinal()) { // 心跳机制
+                    redisReceiver.receiveMessage(convertMessageMethod.PingpongMap(map));
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

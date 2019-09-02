@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.webim.im.model.Enum.cmdEnum;
 import com.webim.im.model.Enum.msgtypeEnum;
 import com.webim.im.model.MessageBody;
 import com.webim.im.utils.Result;
@@ -32,6 +33,22 @@ public class ConvertMessageMethod {
             messageBody1= webUserServer.init(Integer.valueOf(String.valueOf(userid)));
         }else{
             messageBody1 =packageResult(messageBody.getReceiver(),0,"参数userid不可为空");
+        }
+        return messageBody1;
+    }
+
+    public MessageBody PingpongMap(MessageBody messageBody){
+        Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
+        Object ping= mapOm.get("ping");
+        Object userid= mapOm.get("userid");
+        MessageBody messageBody1=null;
+        if(ping=="ping"){
+            messageBody1=new MessageBody();
+            messageBody1.setMsgtype(msgtypeEnum.response.ordinal());
+            messageBody1.setCmd(cmdEnum.ping.ordinal());
+            messageBody1.setReceiver(Integer.valueOf(String.valueOf(userid)));
+            messageBody1.setUrl("PingpongMap");
+            messageBody1.setContent("pong");
         }
         return messageBody1;
     }
