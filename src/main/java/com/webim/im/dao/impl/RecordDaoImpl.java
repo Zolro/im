@@ -3,6 +3,8 @@ package com.webim.im.dao.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.constraints.Max;
+
 import com.webim.im.dao.BaseRepository;
 import com.webim.im.dao.custom.RecordDaoCustom;
 import com.webim.im.dao.custom.Views.UserRecordlist;
@@ -17,15 +19,19 @@ public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
     public Page findUseridRecordCustom(Integer userid,Integer start,Integer limit) {
         QRecord record=QRecord.record;
         QFriends friends=QFriends.friends;
-        List<Integer> list = queryFactory.select(record.toId)
-                .from(record)
-                .where(record.from.id.eq(userid)).orderBy(record.created.desc())
-                .groupBy(record.to).fetch();
+        List<Integer> list =new ArrayList<>();
+        queryFactory.select(record.toId, record.created.max()).from(record) .where(record.from.id.eq(userid)).groupBy(record.toId).fetch().forEach(tuple ->{
+           List<Integer> con= queryFactory.select(record.id)
+                    .from(record)
+                    .where(record.toId.eq(tuple.get(record.toId)))
+                    .where(record.created.eq(tuple.get(record.created))).fetch();
+           con.forEach(tuple1->{
+               list.add(tuple1);
+           });
+        });
         Integer recirdCount=list.size();
-
         List<Record> rd=queryFactory.select(record)
-                .from(record).where(record.toId.in(list)).where(record.signdel.eq(false))
-                .orderBy(record.state.desc(), record.created.desc()).offset(start).limit(limit).fetch();
+                .from(record).where(record.id.in(list)).where(record.signdel.eq(false)).offset(start).limit(limit).fetch();
         List<UserRecordlist> listuser=new ArrayList<>();
         rd.forEach(record1 -> {
             UserRecordlist userRecordlist=new UserRecordlist();
