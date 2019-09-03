@@ -84,6 +84,7 @@ public class RedisReceiver {
                 }
             }
         }
+
     }
 
     // 发送消息 后对消息进行处理
@@ -204,12 +205,13 @@ public class RedisReceiver {
             try {
                 messageBody.setMsgtype(msgtypeEnum.response.ordinal());
                 messageBody.setCmd(cmdEnum.chat.ordinal());
+                Boolean issend=record.getIssend();
                 if (isUserOnline(message.getReceiver())) {
-                    record.setIssend(!record.getIssend());
+                    record.setIssend(!issend);
                     messageBody.setContent(objectMapper.writeValueAsString(record));
                     stringRedisTemplate.convertAndSend("chat", objectMapper.writeValueAsString(messageBody));
                 }
-                record.setIssend(!record.getIssend());
+                record.setIssend(issend);
                 messageBody.setContent(objectMapper.writeValueAsString(record));
                 messageBody.setReceiver(messageBody.getSender());
                 stringRedisTemplate.convertAndSend("chat", objectMapper.writeValueAsString(messageBody));
