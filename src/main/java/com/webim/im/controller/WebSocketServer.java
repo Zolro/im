@@ -2,8 +2,12 @@ package com.webim.im.controller;
 
 
 import java.io.IOException;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.webim.im.Server.UserServer;
+import com.webim.im.config.GetHttpSessionConfigurator;
+import com.webim.im.entity.User;
 import com.webim.im.model.Enum.cmdEnum;
 import com.webim.im.model.Enum.msgtypeEnum;
 import com.webim.im.model.MessageBody;
@@ -14,12 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpSession;
 import javax.websocket.*;
-import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
 @EnableScheduling
-@ServerEndpoint(value = "/websocket/{userid}")
+@ServerEndpoint(value = "/websocket",configurator= GetHttpSessionConfigurator.class)
 @Component
 public class WebSocketServer { //每个人会分配一个独立的实例
 
@@ -44,15 +48,28 @@ public class WebSocketServer { //每个人会分配一个独立的实例
     void  setConvertMessageMethod(ConvertMessageMethod convertMessageMethod){
         WebSocketServer.convertMessageMethod=convertMessageMethod;
     }
+    static UserServer userServer;
+    @Autowired
+    void  setUserServer(UserServer userServer){
+        WebSocketServer.userServer=userServer;
+    }
+
     /**
      * 连接建立成功调用的方法*/
     @OnOpen
-    public void onOpen(@PathParam("userid") Integer userid, Session session) throws Exception {
+    public void onOpen(Session session,EndpointConfig config) throws Exception {
         System.out.println("建立成功");
-        redisReceiver.onOpen(session,userid);
+        Map<String,Object> map= config.getUserProperties();
+        HttpSession session1=(HttpSession)map.get(HttpSession.class.getName());
+       Integer userid=Integer.valueOf(String.valueOf(session1.getAttribute("__userid__"))) ;
+       String  _tb_token_=String.valueOf(session1.getAttribute("_tb_token_"));
+         User user= userServer.findByTopic(userid);
+         if(user==null){
+             throw new Exception("查询对象不存在");
+         }
+        redisReceiver.onOpen(session,user.getId(),_tb_token_);
         // 记载用户初始化信息 连接后台后 发送给前端
-        redisReceiver.sendToUserid(userid,webUserServer.init(userid));
-
+        redisReceiver.sendToUserid(user.getId(),webUserServer.init(user.getId()));
     }
 
     /**
@@ -120,7 +137,6 @@ public class WebSocketServer { //每个人会分配一个独立的实例
                     if (map.getUrl().equals("UseridRecord")) {  // 删除好友消息后 下次刷新不在出现在列表中
                         redisReceiver.receiveMessage(convertMessageMethod.UseridRecord(map));
                     }
-
                 }
                 if (map.getCmd() == cmdEnum.ping.ordinal()) { // 心跳机制
                     redisReceiver.receiveMessage(convertMessageMethod.PingpongMap(map));
