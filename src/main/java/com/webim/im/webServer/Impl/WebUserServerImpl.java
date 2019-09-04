@@ -1,5 +1,7 @@
 package com.webim.im.webServer.Impl;
 
+import java.util.Date;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webim.im.Server.UserServer;
@@ -107,8 +109,8 @@ public class WebUserServerImpl implements WebUserServer {
     }
 
     @Override
-    public MessageBody UserRecordPage(Integer fromid, Integer toid, Integer start, Integer limit) {
-        return packagingulrpublic( getMethodName(),convertObejctToStringTOResult(  userServer.UserRecordPage(fromid,toid,start,limit)),fromid);
+    public MessageBody UserRecordPage(Integer fromid, Integer toid, Integer start, Integer limit, String slursearch, Date starttime) {
+        return packagingulrpublic( getMethodName(),convertObejctToStringTOResult(  userServer.UserRecordPage(fromid,toid,start,limit,slursearch,starttime)),fromid);
     }
 
     @Override

@@ -11,6 +11,7 @@ import com.webim.im.Server.UserServer;
 import com.webim.im.dao.*;
 import com.webim.im.dao.custom.Views.ApplyUserListView;
 import com.webim.im.dao.custom.Views.UserViews;
+import com.webim.im.dao.views.recordpageView;
 import com.webim.im.entity.*;
 import com.webim.im.utils.RedisReceiver;
 import com.webim.im.utils.Result;
@@ -299,8 +300,8 @@ public class UserServerImpl implements UserServer {
     }
 
     @Override
-    public Page UserRecordPage(Integer fromid, Integer toid, Integer start, Integer limit) {
-        return recordDao.UserRecordPage(fromid,toid,start,limit);
+    public recordpageView UserRecordPage(Integer fromid, Integer toid, Integer start, Integer limit, String slursearch, Date starttime) {
+        return recordDao.UserRecordPage(fromid,toid,start,limit,slursearch,starttime);
     }
 
     @Override

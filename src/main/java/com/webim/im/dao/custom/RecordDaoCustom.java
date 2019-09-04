@@ -1,8 +1,10 @@
 package com.webim.im.dao.custom;
 
+import java.util.Date;
 import java.util.List;
 
 import com.webim.im.dao.custom.Views.UserRecordlist;
+import com.webim.im.dao.views.recordpageView;
 import com.webim.im.entity.Record;
 import com.webim.im.view.Page;
 
@@ -40,5 +42,5 @@ public interface RecordDaoCustom {
      * @Date 14:00 2019/8/29
      * @Param
      **/
-    Page UserRecordPage(Integer fromid,Integer toid, Integer start, Integer limit);
+    recordpageView UserRecordPage(Integer fromid, Integer toid, Integer start, Integer limit, String slursearch, Date starttime);
 }

@@ -1,6 +1,7 @@
 package com.webim.im.controller;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -64,6 +65,8 @@ public class ConvertMessageMethod {
         Object toid= mapOm.get("toid");
         Object start= mapOm.get("start");
         Object limit= mapOm.get("limit");
+        Object starttime= mapOm.get("starttime");
+        Object slursearch= mapOm.get("slursearch");
         MessageBody messageBody1=null;
         if(fromid==null){
             messageBody1 =packageResult(messageBody.getReceiver(),0,"参数fromid不可为空");
@@ -73,12 +76,18 @@ public class ConvertMessageMethod {
             messageBody1 =packageResult(messageBody.getReceiver(),0,"参数start不可为空");
         }else if(limit==null){
             messageBody1 =packageResult(messageBody.getReceiver(),0,"参数limit不可为空");
+        }else if(starttime==null){
+            messageBody1 =packageResult(messageBody.getReceiver(),0,"参数starttime不可为空");
+        }else if(slursearch==null){
+            messageBody1 =packageResult(messageBody.getReceiver(),0,"参数slursearch不可为空");
         }else{
             Integer fromidOP= Integer.valueOf(String.valueOf(fromid));
             Integer toidOP= Integer.valueOf(String.valueOf(toid));
             Integer startOP= Integer.valueOf(String.valueOf(start));
             Integer limitOP= Integer.valueOf(String.valueOf(limit));
-            messageBody1= webUserServer.UserRecordPage(fromidOP,toidOP,startOP,limitOP);
+            String  slursearchop= String.valueOf(slursearch);
+            Date starttimeOP =(Date)starttime;
+            messageBody1= webUserServer.UserRecordPage(fromidOP,toidOP,startOP,limitOP,slursearchop,starttimeOP);
         }
         return messageBody1;
     }

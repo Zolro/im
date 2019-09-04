@@ -1,13 +1,20 @@
 package com.webim.im.dao.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.constraints.Max;
 
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.StringTemplate;
 import com.webim.im.dao.BaseRepository;
 import com.webim.im.dao.custom.RecordDaoCustom;
 import com.webim.im.dao.custom.Views.UserRecordlist;
+import com.webim.im.dao.views.recordView;
+import com.webim.im.dao.views.recordpageView;
 import com.webim.im.entity.QFriends;
 import com.webim.im.entity.QRecord;
 import com.webim.im.entity.Record;
@@ -92,21 +99,26 @@ public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
                 .where(record.to.id.eq(touserid))
                 .where(record.state.eq(false)).execute();
     }
-
     @Override
-    public Page UserRecordPage(Integer fromid, Integer toid, Integer start, Integer limit) {
+    public recordpageView UserRecordPage(Integer fromid, Integer toid, Integer start, Integer limit,String slursearch, Date starttime) {
         QRecord record=QRecord.record;
-        List<Record> list= new ArrayList<>();
-        long num =queryFactory.select(record.id).from(record)
+        Date first= queryFactory.select(record.created).from(record).where(record.from.id.eq(fromid)).where(record.to.id.eq(toid)).orderBy(record.created.asc()).fetch().get(0);
+        List<Integer> listrecordId =queryFactory.select(record.id).from(record)
                 .where(record.from.id.eq(fromid))
-                .where(record.to.id.eq(toid)).fetchCount();
-        queryFactory.select(record.id,record.created,record.type,record.state,record.content,record.from.id,record.to.id,record.issend).from(record)
-                .where(record.from.id.eq(fromid))
-                .where(record.to.id.eq(toid)).orderBy(record.created.asc())
+                .where(record.to.id.eq(toid))
+                .where(record.content.like("%"+slursearch+"%"))
+                .where(record.created.gt(starttime)).fetch();
+        recordpageView rpageView=new recordpageView();
+        rpageView.setFirstdate(first);
+        List<recordView> list= new ArrayList<>();
+        queryFactory.select(record.id,record.created,record.type,record.state,record.content,record.from.id,record.to.id,record.issend)
+                .from(record)
+                .where( record.id.in(listrecordId)).orderBy(record.created.asc())
                 .offset(start).limit(limit).fetch().forEach(tuple -> {
-                    Record rd =new Record();
+                    recordView rd =new recordView();
                     rd.setId(tuple.get(record.id));
-                    rd.setCreated(tuple.get(record.created));
+                    rd.setBeforedate(tuple.get(record.created));
+                    rd.setAfterdate(tuple.get(record.created));
                     rd.setIssend(tuple.get(record.issend));
                     rd.setType(tuple.get(record.type));
                     rd.setState(tuple.get(record.state));
@@ -114,7 +126,10 @@ public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
                     rd.setFromId(tuple.get(record.from.id));
                     rd.setToId(tuple.get(record.to.id));
                     list.add(rd);
-                  });
-        return new Page(list,start,limit,Integer.valueOf(String.valueOf(num)));
+                });
+        rpageView.setPage(new Page(list,start,limit,listrecordId.size()));
+//        System.out.println(String.format("%tR", new Date()));
+//        String newString = new SimpleDateFormat("yyyy-MM-dd").format(date); //09:00
+        return   rpageView;
     }
 }

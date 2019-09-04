@@ -1,5 +1,6 @@
 package com.webim.im.webServer;
 
+import java.util.Date;
 import java.util.List;
 
 import com.webim.im.entity.User;
@@ -121,7 +122,7 @@ public interface WebUserServer {
      * @Date 14:12 2019/8/29
      * @Param
      **/
-    MessageBody UserRecordPage(Integer fromid, Integer toid, Integer start, Integer limit);
+    MessageBody UserRecordPage(Integer fromid, Integer toid, Integer start, Integer limit, String slursearch, Date starttime);
     /**
      * @Author zw
      * @Description 关闭聊天信息

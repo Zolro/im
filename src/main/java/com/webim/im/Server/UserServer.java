@@ -1,10 +1,12 @@
 package com.webim.im.Server;
 
+import java.util.Date;
 import java.util.List;
 
 import com.webim.im.Server.SererImpl.view.TemporaryUserinfo;
 import com.webim.im.dao.custom.Views.ApplyUserListView;
 import com.webim.im.dao.custom.Views.UserViews;
+import com.webim.im.dao.views.recordpageView;
 import com.webim.im.entity.ApplyUser;
 import com.webim.im.entity.Record;
 import com.webim.im.entity.User;
@@ -93,7 +95,7 @@ public interface UserServer {
      * @Date 14:10 2019/8/29
      * @Param
      **/
-    Page UserRecordPage(Integer fromid, Integer toid, Integer start, Integer limit);
+    recordpageView UserRecordPage(Integer fromid, Integer toid, Integer start, Integer limit, String slursearch, Date starttime);
 
     /**
      * @Author zw
