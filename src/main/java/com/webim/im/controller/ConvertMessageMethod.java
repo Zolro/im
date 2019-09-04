@@ -1,6 +1,8 @@
 package com.webim.im.controller;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -86,7 +88,14 @@ public class ConvertMessageMethod {
             Integer startOP= Integer.valueOf(String.valueOf(start));
             Integer limitOP= Integer.valueOf(String.valueOf(limit));
             String  slursearchop= String.valueOf(slursearch);
-            Date starttimeOP =(Date)starttime;
+            Date starttimeOP = null;
+            //先将要格式化的字符串转为Date类型
+            try {
+                SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd");
+                starttimeOP = dateFormat.parse(String.valueOf(starttime));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
             messageBody1= webUserServer.UserRecordPage(fromidOP,toidOP,startOP,limitOP,slursearchop,starttimeOP);
         }
         return messageBody1;
