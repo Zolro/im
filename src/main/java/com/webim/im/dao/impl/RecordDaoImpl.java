@@ -52,7 +52,7 @@ public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
             touser.setAvatar( user.getAvatar());
             userRecordlist.setTo(touser);
             userRecordlist.setType(record1.getType());
-            long num= queryFactory.select(record).from(record).where(record.to.id.eq(record1.getToId())).where(record.state.eq(false)).fetchCount();
+            long num= queryFactory.select(record).from(record).where(record.from.id.eq(record1.getFromId())).where(record.to.id.eq(record1.getToId())).where(record.state.eq(false)).fetchCount();
             Integer count=Integer.valueOf(String.valueOf(num));
             userRecordlist.setNoreadcount(count);
             listuser.add(userRecordlist);
