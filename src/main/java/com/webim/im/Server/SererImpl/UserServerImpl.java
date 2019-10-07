@@ -17,7 +17,7 @@ import com.webim.im.utils.RedisReceiver;
 import com.webim.im.utils.Result;
 import com.webim.im.view.Page;
 import com.xinlianshiye.clouds.sso.common.resource.MemberResource;
-import com.xinlianshiye.clouds.sso.common.view.Member;
+import com.xinlianshiye.clouds.sso.facade.model.Member;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

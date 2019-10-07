@@ -100,25 +100,30 @@
             <groupId>com.xinlianshiye.clouds</groupId>
             <artifactId>clouds-sso-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>javassist</artifactId>
-                    <groupId>javassist</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>javassist</artifactId>
-                    <groupId>org.javassist</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>caffeine</artifactId>
-                    <groupId>com.github.ben-manes.caffeine</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>slf4j-api</artifactId>
-                    <groupId>org.slf4j</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.xinlianshiye.clouds</groupId>-->
+            <!--<artifactId>clouds-sso-common</artifactId>-->
+            <!--<version>0.0.1-SNAPSHOT</version>-->
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>javassist</artifactId>-->
+                    <!--<groupId>javassist</groupId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>javassist</artifactId>-->
+                    <!--<groupId>org.javassist</groupId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>caffeine</artifactId>-->
+                    <!--<groupId>com.github.ben-manes.caffeine</groupId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>slf4j-api</artifactId>-->
+                    <!--<groupId>org.slf4j</groupId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+        <!--</dependency>-->
     </dependencies>
 
     <build>
