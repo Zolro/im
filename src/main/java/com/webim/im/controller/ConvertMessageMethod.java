@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webim.im.model.Enum.cmdEnum;
 import com.webim.im.model.Enum.msgtypeEnum;
@@ -135,7 +134,7 @@ public class ConvertMessageMethod {
         }else if(friendid==null){
             messageBody1 =packageResult(messageBody.getReceiver(),0,"参数friendid不可为空");
         }else {
-            messageBody1= webUserServer.delfriendAndRecord(Integer.valueOf(String.valueOf(userid)),Integer.valueOf(String.valueOf(friendid)));
+            messageBody1= webUserServer.delFriendAndRecord(Integer.valueOf(String.valueOf(userid)),Integer.valueOf(String.valueOf(friendid)));
         }
         return messageBody1;
     }
@@ -147,7 +146,7 @@ public class ConvertMessageMethod {
         Object userid= mapOm.get("userid");
         MessageBody messageBody1=null;
         if(userid!=null){
-            messageBody1= webUserServer.getuserlist(Integer.valueOf(String.valueOf(userid)));
+            messageBody1= webUserServer.getUserList(Integer.valueOf(String.valueOf(userid)));
         }else{
             messageBody1 =packageResult(messageBody.getReceiver(),0,"参数userid不可为空");
         }
@@ -159,7 +158,7 @@ public class ConvertMessageMethod {
         Object userid= mapOm.get("userid");
         MessageBody messageBody1=null;
         if(userid!=null){
-            messageBody1= webUserServer.getapplyfriendlist(Integer.valueOf(String.valueOf(userid)));
+            messageBody1= webUserServer.getApplyFriendList(Integer.valueOf(String.valueOf(userid)));
         }else{
             messageBody1 =packageResult(messageBody.getReceiver(),0,"userid不可为空");
         }
@@ -208,7 +207,7 @@ public class ConvertMessageMethod {
         }else if(username==null){
             messageBody1 =packageResult(messageBody.getReceiver(),0,"name不可为空");
         }else{
-            messageBody1= webUserServer.getlistUserName(Integer.valueOf(String.valueOf(userid)),String.valueOf(username));
+            messageBody1= webUserServer.getListUserName(Integer.valueOf(String.valueOf(userid)),String.valueOf(username));
         }
         return messageBody1;
     }
@@ -222,7 +221,7 @@ public class ConvertMessageMethod {
         }else if(recordid==null){
             messageBody1 =packageResult(messageBody.getReceiver(),0,"recordid不可为空");
         }else{
-            messageBody1= webUserServer.delmsglistInfo(Integer.valueOf(String.valueOf(fromid)),Integer.valueOf(String.valueOf(recordid)));
+            messageBody1= webUserServer.delMsgListInfo(Integer.valueOf(String.valueOf(fromid)),Integer.valueOf(String.valueOf(recordid)));
         }
         return messageBody1;
     }
@@ -250,7 +249,7 @@ public class ConvertMessageMethod {
         }else if(username==null){
             messageBody1 =packageResult(messageBody.getReceiver(),0,"name不可为空");
         }else{
-            messageBody1= webUserServer.getlistUserNamefriend(Integer.valueOf(String.valueOf(userid)),String.valueOf(username));
+            messageBody1= webUserServer.getListUserNameFriend(Integer.valueOf(String.valueOf(userid)),String.valueOf(username));
         }
         return messageBody1;
     }
@@ -301,7 +300,7 @@ public class ConvertMessageMethod {
             Integer augroupiden=Integer.valueOf(String.valueOf(groupiden));
             Integer autype=Integer.valueOf(String.valueOf(type));
             String aupostscript=String.valueOf(postscript);
-            messageBody1= webUserServer.getfriedns(auformId,autouserId,augroupiden,autype,aupostscript);
+            messageBody1= webUserServer.getFriends(auformId,autouserId,augroupiden,autype,aupostscript);
             messageBody1.setReceiver(messageBody.getReceiver());
         }
         return messageBody1;
