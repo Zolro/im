@@ -18,6 +18,9 @@ public abstract class WebSession {
       throw new Exception("获取 Session 失败");
     }
     HttpSession session1 = (HttpSession) map.get(SESSIONKEY);
+    if (session1 == null) {
+      return null;
+    }
     UserInfoPojo pojo = new UserInfoPojo();
     pojo.setUserId(Integer.valueOf(String.valueOf(session1.getAttribute(USERIDKEY))));
     pojo.setToken(String.valueOf(session1.getAttribute(TOKENKEY)));

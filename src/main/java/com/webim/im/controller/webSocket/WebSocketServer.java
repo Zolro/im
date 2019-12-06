@@ -3,6 +3,7 @@ package com.webim.im.controller.webSocket;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webim.im.Server.UserServer;
 import com.webim.im.common.WebSession;
+import com.webim.im.common.pojo.UserInfoPojo;
 import com.webim.im.config.GetHttpSessionConfigurator;
 import com.webim.im.controller.ConvertMessageMethod;
 import com.webim.im.entity.User;
@@ -64,7 +65,11 @@ public class WebSocketServer extends WebSession { // 每个人会分配一个独
   @OnOpen
   public void onOpen(Session session, EndpointConfig config) throws Exception {
     logger.debug("建立成功");
-    User user = userServer.findByTopic(getLoginUserInfo(config).getUserId());
+    UserInfoPojo userInfoPojo=getLoginUserInfo(config);
+    if (userInfoPojo == null) {
+      throw new Exception("查询对象不存在");
+    }
+    User user = userServer.findByTopic(userInfoPojo.getUserId());
     if (user == null) {
       throw new Exception("查询对象不存在");
     }
@@ -167,7 +172,13 @@ public class WebSocketServer extends WebSession { // 每个人会分配一个独
 
   @OnError
   public void onError(Session session, Throwable error) {
-    logger.debug("发生错误");
+    StackTraceElement element = error.getStackTrace()[0];
+    logger.error(
+        "Message:{},Class:{},Method:{},Line:{}",
+        error.getStackTrace(),
+        element.getClassName(),
+        element.getMethodName(),
+        element.getLineNumber());
     error.printStackTrace();
   }
 }
