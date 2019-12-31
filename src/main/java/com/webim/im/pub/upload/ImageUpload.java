@@ -3,7 +3,7 @@ package com.webim.im.pub.upload;
 import java.io.File;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.webim.im.entity.User;
+import com.webim.im.module.entity.User;
 import com.webim.im.utils.MD5Util;
 import com.webim.im.view.ImageView;
 

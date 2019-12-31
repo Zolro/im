@@ -1,19 +1,19 @@
 package com.webim.im.controller.webSocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.webim.im.Server.UserServer;
+import com.webim.im.module.server.UserServer;
 import com.webim.im.common.WebSession;
 import com.webim.im.common.pojo.UserInfoPojo;
 import com.webim.im.config.GetHttpSessionConfigurator;
 import com.webim.im.controller.ConvertMessageMethod;
-import com.webim.im.entity.User;
+import com.webim.im.module.entity.User;
 import com.webim.im.model.Enum.cmdEnum;
 import com.webim.im.model.Enum.msgtypeEnum;
 import com.webim.im.model.MessageBody;
 import com.webim.im.utils.RedisReceiver;
 import com.webim.im.webServer.WebUserServer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
@@ -24,8 +24,8 @@ import javax.websocket.server.ServerEndpoint;
 @EnableScheduling
 @ServerEndpoint(value = "/websocket", configurator = GetHttpSessionConfigurator.class)
 @Component
+@Slf4j
 public class WebSocketServer extends WebSession { // 每个人会分配一个独立的实例
-  private static final Logger logger = LogManager.getLogger(WebSocketServer.class);
   static WebUserServer webUserServer;
 
   @Autowired
@@ -64,7 +64,7 @@ public class WebSocketServer extends WebSession { // 每个人会分配一个独
   /** 连接建立成功调用的方法 */
   @OnOpen
   public void onOpen(Session session, EndpointConfig config) throws Exception {
-    logger.debug("建立成功");
+    log.debug("建立成功");
     UserInfoPojo userInfoPojo=getLoginUserInfo(config);
     if (userInfoPojo == null) {
       throw new Exception("查询对象不存在");
@@ -173,7 +173,7 @@ public class WebSocketServer extends WebSession { // 每个人会分配一个独
   @OnError
   public void onError(Session session, Throwable error) {
     StackTraceElement element = error.getStackTrace()[0];
-    logger.error(
+    log.error(
         "Message:{},Class:{},Method:{},Line:{}",
         error.getStackTrace(),
         element.getClassName(),

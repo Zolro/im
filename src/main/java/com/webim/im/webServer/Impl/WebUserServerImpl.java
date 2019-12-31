@@ -2,7 +2,7 @@ package com.webim.im.webServer.Impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.webim.im.Server.UserServer;
+import com.webim.im.module.server.UserServer;
 import com.webim.im.model.Enum.cmdEnum;
 import com.webim.im.model.Enum.msgtypeEnum;
 import com.webim.im.model.MessageBody;

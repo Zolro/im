@@ -2,7 +2,7 @@ package com.webim.im.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.webim.im.Server.UserServer;
+import com.webim.im.module.server.UserServer;
 import com.webim.im.common.WebSession;
 import com.webim.im.common.factorys.ObjectFactory;
 import com.webim.im.common.factorys.ReturnMessageFactory;
@@ -11,8 +11,8 @@ import com.webim.im.common.pojo.UserInfoPojo;
 import com.webim.im.utils.ImageUploadUtils;
 import com.webim.im.utils.Result;
 import com.webim.im.view.ImageView;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,8 +25,8 @@ import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 @RestController
+@Slf4j
 public class PublicController extends WebSession {
-  private static final Logger logger = LogManager.getLogger(PublicController.class);
   @Autowired UserServer userServer;
   @Autowired ObjectMapper objectMapper;
 
@@ -57,7 +57,7 @@ public class PublicController extends WebSession {
       String avatar = String.valueOf(map.get("result").get("avatar"));
       Integer topic = Integer.valueOf(String.valueOf(map.get("result").get("id")));
       Integer info = userServer.getImUserInfo(topic, name, avatar);
-      logger.debug("Im UserInfo:{}", info);
+      log.debug("Im UserInfo:{}", info);
       return ReturnMessageFactory.create(1, null, ObjectFactory.create(info));
     }
     return ReturnMessageFactory.create(-1, "未登录");

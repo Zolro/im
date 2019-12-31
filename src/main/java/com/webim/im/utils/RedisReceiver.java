@@ -3,17 +3,17 @@ package com.webim.im.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webim.im.Enum.User.UserEnum;
-import com.webim.im.dao.RecordDao;
-import com.webim.im.dao.UserDao;
-import com.webim.im.entity.Record;
-import com.webim.im.entity.User;
+import com.webim.im.module.dao.RecordDao;
+import com.webim.im.module.dao.UserDao;
+import com.webim.im.module.entity.Record;
+import com.webim.im.module.entity.User;
 import com.webim.im.model.ContentBoby;
 import com.webim.im.model.Enum.cmdEnum;
 import com.webim.im.model.Enum.msgtypeEnum;
 import com.webim.im.model.MessageBody;
 import com.webim.im.webServer.WebUserServer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -30,8 +30,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @EnableScheduling
 @Service
 @Transactional
+@Slf4j
 public class RedisReceiver {
-  private static final Logger logger = LogManager.getLogger(RedisReceiver.class);
   @Autowired WebUserServer webuserServer;
   @Autowired StringRedisTemplate stringRedisTemplate;
   @Autowired UserDao userDao;
@@ -55,7 +55,7 @@ public class RedisReceiver {
   public void onOpen(Session session, Integer userid, String token) {
     if (map.get(token) == null) {
       map.put(token, new SessionInfo(session, userid));
-      logger.debug("有人上线了：{}", map.size());
+      log.debug("有人上线了：{}", map.size());
 
       stringRedisTemplate.opsForValue().setBit(UserEnum.ONLINE.toString(), userid, true);
       sendOnlineOrOffline(userid, UserEnum.ONLINE.toString());
@@ -70,7 +70,7 @@ public class RedisReceiver {
         stringRedisTemplate.opsForValue().setBit("ONLINE", info.userid, false); // 标记为不在线
         sendOnlineOrOffline(info.userid, UserEnum.OFFLINE.toString());
         map.remove(s);
-        logger.debug("有人下线了：{}", map.size());
+        log.debug("有人下线了：{}", map.size());
         break;
       }
     }
@@ -89,7 +89,7 @@ public class RedisReceiver {
   }
   // 发送消息给前端
   public void send(Session session, String text) {
-    logger.info("发送消息");
+    log.info("发送消息");
     try {
       session.getAsyncRemote().sendText(text);
     } catch (Exception e) {
@@ -187,7 +187,7 @@ public class RedisReceiver {
 
   @Scheduled(fixedRate = 100000) // 每隔多少秒执行1次
   public void refreshRedisOnlineInfo() {
-    logger.debug("刷新redis在线数据(仅限于单机服务器，集群环境下会出错)");
+    log.debug("刷新redis在线数据(仅限于单机服务器，集群环境下会出错)");
     stringRedisTemplate.delete("ONLINE");
     for (SessionInfo value : map.values()) {
       SessionInfo info = value;

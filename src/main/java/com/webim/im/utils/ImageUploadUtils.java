@@ -1,7 +1,6 @@
 package com.webim.im.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.webim.im.entity.User;
+import com.webim.im.module.entity.User;
 import com.webim.im.pub.upload.ImageUpload;
 import com.webim.im.view.ImageView;
 import org.springframework.web.multipart.MultipartFile;
