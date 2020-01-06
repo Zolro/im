@@ -58,7 +58,7 @@ public class PublicController extends WebSession {
       Integer topic = Integer.valueOf(String.valueOf(map.get("result").get("id")));
       Integer info = userServer.getImUserInfo(topic, name, avatar);
       log.debug("Im UserInfo:{}", info);
-      return ReturnMessageFactory.create(1, null, ObjectFactory.create(info));
+      return ReturnMessageFactory.create(1, null, ObjectFactory.create(pojo,info));
     }
     return ReturnMessageFactory.create(-1, "未登录");
   }

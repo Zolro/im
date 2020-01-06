@@ -56,7 +56,6 @@ public class RedisReceiver {
     if (map.get(token) == null) {
       map.put(token, new SessionInfo(session, userid));
       log.debug("有人上线了：{}", map.size());
-
       stringRedisTemplate.opsForValue().setBit(UserEnum.ONLINE.toString(), userid, true);
       sendOnlineOrOffline(userid, UserEnum.ONLINE.toString());
     }
@@ -65,7 +64,6 @@ public class RedisReceiver {
   public void onClose(Session session) {
     for (String s : map.keySet()) {
       SessionInfo info = map.get(s);
-      System.out.println(session);
       if (info.session == session) {
         stringRedisTemplate.opsForValue().setBit("ONLINE", info.userid, false); // 标记为不在线
         sendOnlineOrOffline(info.userid, UserEnum.OFFLINE.toString());

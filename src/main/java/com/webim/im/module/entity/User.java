@@ -23,7 +23,5 @@ public class User {
     private Date created;     // 用户创建时间
     @Column(nullable = true)
     private Date logintime;   // 用户登录时间/退出时间
-//    @Column(name = "`password`")
-//    private String password;  //用户密码
     private Integer statusexist; // 账户状态  （0.删除，1.停用，2.正常） 枚举类 UserAccountEnum
 }

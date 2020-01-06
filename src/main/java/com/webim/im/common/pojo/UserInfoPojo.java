@@ -17,8 +17,10 @@ public class UserInfoPojo {
   /** The Id. */
   private Integer id;
   /** The User id. */
-  @JsonIgnore private Integer userId;
+//  @JsonIgnore
+  private Integer userId;
 
   /** The Token. */
-  @JsonIgnore private String token;
+//  @JsonIgnore
+  private String token;
 }

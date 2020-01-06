@@ -27,4 +27,15 @@ public class ObjectFactory {
     pojo.setId(id);
     return pojo;
   }
+  public static UserInfoPojo create(UserInfoPojo pojo,Integer id) {
+    UserInfoPojo pojo1= new UserInfoPojo();
+    if(pojo==null){
+      pojo = new UserInfoPojo();
+    }
+    pojo.setId(id);
+    pojo1.setToken(pojo.getToken());
+    pojo1.setUserId(pojo.getUserId());
+    pojo1.setId(pojo.getId());
+    return pojo1;
+  }
 }
