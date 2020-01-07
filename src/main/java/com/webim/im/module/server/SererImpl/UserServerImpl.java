@@ -54,7 +54,7 @@ public class UserServerImpl implements UserServer {
     @Value("${xwt.domain}")
     private String xwtDomain;
     private Map getUserInfo(Integer ssoid) { //获取鞋网通用户信息
-        String url = xwtDomain + "/web/member/role/info?id=" + ssoid;
+        String url = xwtDomain+ ssoid;
         Map map= restTemplate.getForObject(url, Map.class);
         if(map.get("code").equals(1)){
             Map result= (Map)map.get("result");
@@ -235,10 +235,12 @@ public class UserServerImpl implements UserServer {
         getapplyfriendlist.stream().map(bean->{
             User to= userDao.findById(bean.getFromid());
             Map map = getUserInfo(to.getTopic());
-            bean.setFromusername(map.get("nickname").toString());
-            Object object=map.get("avatar");
-            if(object!=null){
-                bean.setAvatar(object.toString());
+            if(map!=null){
+                bean.setFromusername(map.get("nickname").toString());
+                Object object=map.get("avatar");
+                if(object!=null){
+                    bean.setAvatar(object.toString());
+                }
             }
             return bean;
         }).collect(Collectors.toList());
@@ -299,19 +301,19 @@ public class UserServerImpl implements UserServer {
         TemporaryUserinfo temporaryUserinfo=new TemporaryUserinfo();
         User user=userDao.findByTopic(topic);
         if(user ==null){
-            Member map= getuserinfo(topic);
+            Member map= getSSOUserInfo(topic);
             user=createtoUser(map.getId(),map.getNickname(),"","/public/upload/usr/supplier/f1a8b40c6b5ef347fd6e453eb1eae904.jpg");
         }else{
             temporaryUserinfo.setList(findUserRead(formuserid, topic));
         }
         temporaryUserinfo.setId(user.getId());
-        temporaryUserinfo.setAvatar(user.getAvatar());
         temporaryUserinfo.setSign(user.getSign());
         temporaryUserinfo.setStatus(user.getStatus());
+        temporaryUserinfo.setAvatar(user.getAvatar());
         temporaryUserinfo.setUsername(user.getUsername());
+        getRoleInfo(temporaryUserinfo, user);
         return  temporaryUserinfo;
     }
-
     @Override
     public List<User> getlistNameUser(Integer userid, String name) {
         List<User> list=userDao.getlistUserName(userid,name);
@@ -352,7 +354,7 @@ public class UserServerImpl implements UserServer {
         return  true;
     }
 
-    private Member getuserinfo(Integer topic){
+    private Member getSSOUserInfo(Integer topic){
         return new MemberResource(ssoDomain).fetchMember(topic.toString(), null);
     }
 
@@ -362,6 +364,16 @@ public class UserServerImpl implements UserServer {
         Object avatar= map.get("avatar");
         if(avatar!=null){
             to.setAvatar(avatar.toString());
+        }
+    }
+    private void getRoleInfo(TemporaryUserinfo temporaryUserinfo, User user) {
+        Map map = getUserInfo(user.getTopic());
+        if(map!=null){
+            temporaryUserinfo.setUsername(map.get("nickname").toString());
+            Object avatar= map.get("avatar");
+            if(avatar!=null){
+                temporaryUserinfo.setAvatar(avatar.toString());
+            }
         }
     }
 }
