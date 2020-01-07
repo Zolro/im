@@ -17,7 +17,7 @@ import com.webim.im.view.Page;
 
 public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
     @Override
-    public Page findUseridRecordCustom(Integer userid,Integer start,Integer limit) {
+    public Page<UserRecordlist> findUseridRecordCustom(Integer userid,Integer start,Integer limit) {
         QRecord record=QRecord.record;
         QFriends friends= QFriends.friends;
         List<Integer> list =new ArrayList<>();
@@ -32,7 +32,7 @@ public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
         });
         Integer recirdCount=list.size();
         List<Record> rd=queryFactory.select(record)
-                .from(record).where(record.id.in(list)).where(record.signdel.eq(false)).offset(start).limit(limit).fetch();
+                .from(record).where(record.id.in(list)).where(record.signdel.eq(false)).orderBy(record.created.desc()).offset(start).limit(limit).fetch();
         List<UserRecordlist> listuser=new ArrayList<>();
         rd.forEach(record1 -> {
             UserRecordlist userRecordlist=new UserRecordlist();
@@ -43,7 +43,6 @@ public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
             userRecordlist.setIssend(record1.getIssend());
             userRecordlist.setState(record1.getState());
             userRecordlist.setToId(record1.getToId());
-
            Boolean friendsexists= queryFactory.select(friends.id).from(friends).where(friends.user.id.eq(record1.getFromId())).where(friends.friend.id.eq(record1.getToId())).fetchCount() > 0 ;
             userRecordlist.setExistsfriends(friendsexists);
             User touser=new User();
@@ -51,6 +50,7 @@ public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
             touser.setId( user.getId());
             touser.setUsername( user.getUsername());
             touser.setAvatar( user.getAvatar());
+            touser.setTopic( user.getTopic());
             userRecordlist.setTo(touser);
             userRecordlist.setType(record1.getType());
             long num= queryFactory.select(record).from(record).where(record.from.id.eq(record1.getFromId())).where(record.to.id.eq(record1.getToId())).where(record.state.eq(false)).fetchCount();

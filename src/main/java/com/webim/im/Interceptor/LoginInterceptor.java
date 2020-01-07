@@ -18,8 +18,6 @@ public class LoginInterceptor extends WebSession implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         UserInfoPojo pojo = getLoginUserInfo(request.getSession(false));
-        log.error(pojo.getToken());
-        log.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         return true;
 //    /** 不等于null 登录成功 */
 //    if (pojo != null) {

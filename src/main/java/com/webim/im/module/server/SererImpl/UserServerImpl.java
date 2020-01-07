@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webim.im.Enum.Friend.FriendsEnum;
 import com.webim.im.Enum.User.UserAccountEnum;
 import com.webim.im.Enum.User.UserEnum;
+import com.webim.im.module.dao.custom.Views.UserRecordlist;
 import com.webim.im.module.server.SererImpl.view.GroupfriendsList;
 import com.webim.im.module.server.SererImpl.view.InitViews;
 import com.webim.im.module.server.SererImpl.view.TemporaryUserinfo;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -48,6 +50,18 @@ public class UserServerImpl implements UserServer {
     private String ssoDomain;
     @Autowired
     RestTemplate restTemplate;
+
+    @Value("${xwt.domain}")
+    private String xwtDomain;
+    private Map getUserInfo(Integer ssoid) { //获取鞋网通用户信息
+        String url = xwtDomain + "/web/member/role/info?id=" + ssoid;
+        Map map= restTemplate.getForObject(url, Map.class);
+        if(map.get("code").equals(1)){
+            Map result= (Map)map.get("result");
+            return  result;
+        }
+        return  null;
+    }
     @Override
     public Object init(Integer userid) {
 
@@ -81,7 +95,9 @@ public class UserServerImpl implements UserServer {
                 }else{
                     ur.setStatus(UserEnum.OFFLINE.ordinal());
                 }
-                ur.setSign(ur.getSign());
+                ur.setSign(us.getSign());
+                ur.setTopic(us.getTopic());
+                setXwtInfo(ur);
                 userList.add(ur);
             });
             gf.setList(userList);
@@ -216,9 +232,18 @@ public class UserServerImpl implements UserServer {
     @Override
     public List<ApplyUserListView> getapplyfriendlist(Integer userid) {
         List<ApplyUserListView> getapplyfriendlist = applyUserDao.getapplyfriendlist(userid);
+        getapplyfriendlist.stream().map(bean->{
+            User to= userDao.findById(bean.getFromid());
+            Map map = getUserInfo(to.getTopic());
+            bean.setFromusername(map.get("nickname").toString());
+            Object object=map.get("avatar");
+            if(object!=null){
+                bean.setAvatar(object.toString());
+            }
+            return bean;
+        }).collect(Collectors.toList());
         return getapplyfriendlist;
     }
-
     @Override
     public ApplyUser updApplyUser(Integer applyuserid,Integer state,String reply,Integer groupid) {
         // 修改好友申请表信息
@@ -258,8 +283,15 @@ public class UserServerImpl implements UserServer {
     }
 
     @Override
-    public Page findUseridRecordCustom(Integer userid, Integer start, Integer limit) {
-        return recordDao.findUseridRecordCustom(userid,start,limit);
+    public Page<UserRecordlist> findUseridRecordCustom(Integer userid, Integer start, Integer limit) {
+        Page<UserRecordlist>  page=recordDao.findUseridRecordCustom(userid,start,limit);
+        page.getItems().stream().map(bean->{
+            User to= bean.getTo();
+            setXwtInfo(to);
+            bean.setTo(to);
+            return bean;
+        }).collect(Collectors.toList());
+        return page;
     }
 
     @Override
@@ -282,12 +314,22 @@ public class UserServerImpl implements UserServer {
 
     @Override
     public List<User> getlistNameUser(Integer userid, String name) {
-        return userDao.getlistUserName(userid,name);
+        List<User> list=userDao.getlistUserName(userid,name);
+        list.stream().map(bean->{
+            setXwtInfo(bean);
+            return bean;
+        }).collect(Collectors.toList());
+        return list;
     }
 
     @Override
     public List<User> getlistUserNamefriend(Integer userid, String name) {
-        return userDao.getlistUserNamefriend(userid,name);
+        List<User> list=userDao.getlistUserNamefriend(userid,name);
+        list.stream().map(bean->{
+            setXwtInfo(bean);
+            return bean;
+        }).collect(Collectors.toList());
+        return list;
     }
     @Override
     public Boolean delfriendAndRecord(Integer userid, Integer friendid) {
@@ -312,5 +354,14 @@ public class UserServerImpl implements UserServer {
 
     private Member getuserinfo(Integer topic){
         return new MemberResource(ssoDomain).fetchMember(topic.toString(), null);
+    }
+
+    private void setXwtInfo(User to) { //设置鞋网通用户信息
+        Map map = getUserInfo(to.getTopic());
+        to.setUsername(map.get("nickname").toString());
+        Object avatar= map.get("avatar");
+        if(avatar!=null){
+            to.setAvatar(avatar.toString());
+        }
     }
 }

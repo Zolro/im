@@ -3,6 +3,7 @@ package com.webim.im.module.server;
 import java.util.Date;
 import java.util.List;
 
+import com.webim.im.module.dao.custom.Views.UserRecordlist;
 import com.webim.im.module.server.SererImpl.view.TemporaryUserinfo;
 import com.webim.im.module.dao.custom.Views.ApplyUserListView;
 import com.webim.im.module.dao.custom.Views.UserViews;
@@ -58,7 +59,7 @@ public interface UserServer {
      * @Date 21:00 2019/8/14
      * @Param
      **/
-    Page findUseridRecordCustom(Integer userid, Integer start, Integer limit);
+    Page<UserRecordlist> findUseridRecordCustom(Integer userid, Integer start, Integer limit);
 
     /**
      * @Author zw

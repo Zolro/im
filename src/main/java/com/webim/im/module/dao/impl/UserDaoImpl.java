@@ -85,7 +85,7 @@ public class UserDaoImpl extends BaseRepository implements UserDaoCustom {
         List<User> userList=new ArrayList<>();
         queryFactory.select(user.id,user.username,user.avatar,user.sign)
                 .from(user).where(user.id.in(list))
-                .where(user.username.like("%"+name+"%")).fetch().stream().forEach(tuple -> {
+                .where(user.username.contains(name)).fetch().stream().forEach(tuple -> {
             User user1=new User();
             user1.setId(tuple.get(user.id));
             user1.setAvatar(tuple.get(user.avatar));

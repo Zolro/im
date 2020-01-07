@@ -12,7 +12,6 @@ import com.webim.im.model.Enum.cmdEnum;
 import com.webim.im.model.Enum.msgtypeEnum;
 import com.webim.im.model.MessageBody;
 import com.webim.im.webServer.WebUserServer;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -20,11 +19,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.EntityManager;
 import javax.websocket.Session;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 @EnableScheduling
@@ -40,37 +40,45 @@ public class RedisReceiver {
   @Autowired EntityManager entityManager;
 
   public static class SessionInfo {
-    public Session session;
     public Integer userid;
-
-    public SessionInfo(Session session, Integer userid) {
-      this.session = session;
+    public String token;
+    public SessionInfo(Integer userid, String token) {
       this.userid = userid;
+      this.token = token;
     }
   }
 
   /** 采用ConcurrentHashMap类,细化锁颗粒度 */
-  private ConcurrentHashMap<String, SessionInfo> map = new ConcurrentHashMap();
-
+  private ConcurrentHashMap<Integer, List<Session>> userOnlines = new ConcurrentHashMap();
+  private ConcurrentHashMap<Session, SessionInfo> userMap = new ConcurrentHashMap();
   public void onOpen(Session session, Integer userid, String token) {
-    if (map.get(token) == null) {
-      map.put(token, new SessionInfo(session, userid));
-      log.debug("有人上线了：{}", map.size());
+    List<Session> list=userOnlines.get(userid);
+    if(list==null){
+      list=new ArrayList<>();
+      list.add(session);
+      userOnlines.put(userid,list);
       stringRedisTemplate.opsForValue().setBit(UserEnum.ONLINE.toString(), userid, true);
       sendOnlineOrOffline(userid, UserEnum.ONLINE.toString());
+      log.debug("有人上线了：{}", userOnlines.keySet().size());
+    }else{
+      list.add(session);
+    }
+    SessionInfo infolist= userMap.get(session);
+    if(infolist==null){
+      infolist=(new SessionInfo(userid, token));
+      userMap.put(session,infolist);
     }
   }
 
   public void onClose(Session session) {
-    for (String s : map.keySet()) {
-      SessionInfo info = map.get(s);
-      if (info.session == session) {
+    SessionInfo info=userMap.get(session);
+    if(userMap.get(session)!=null){
+      if(userOnlines.get(info.userid).size()==1){
         stringRedisTemplate.opsForValue().setBit("ONLINE", info.userid, false); // 标记为不在线
         sendOnlineOrOffline(info.userid, UserEnum.OFFLINE.toString());
-        map.remove(s);
-        log.debug("有人下线了：{}", map.size());
-        break;
+        log.debug("有人下线了：{}", userOnlines.keySet().size());
       }
+      userMap.remove(session);
     }
   }
 
@@ -89,7 +97,12 @@ public class RedisReceiver {
   public void send(Session session, String text) {
     log.info("发送消息");
     try {
-      session.getAsyncRemote().sendText(text);
+      if(session.isOpen()){
+        session.getAsyncRemote().sendText(text);
+      }else {
+        log.info("session通道已关闭");
+        session.close();
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -99,14 +112,14 @@ public class RedisReceiver {
   public boolean isUserOnline(Integer userid) {
     return stringRedisTemplate.opsForValue().getBit("ONLINE", userid);
   }
-  // 判断该用户id 是否在线
-  public boolean isUserOnline(Integer userid, Session session) {
-    return stringRedisTemplate.opsForValue().getBit("ONLINE", userid);
-  }
+//  // 判断该用户id 是否在线
+//  public boolean isUserOnline(Integer userid, Session session) {
+//    return stringRedisTemplate.opsForValue().getBit("ONLINE", userid);
+//  }
 
   /** 接收消息的方法 */
   public void receiveMessage(String message) {
-    System.out.println("收到一条消息：" + message);
+    System.err.println("收到一条消息：" + message);
     try {
       MessageBody messageBody = objectMapper.readValue(message, MessageBody.class);
       sendToUserid(messageBody.getReceiver(), messageBody);
@@ -126,17 +139,22 @@ public class RedisReceiver {
   public void sendToUserid(Integer userid, MessageBody messageBody) throws Exception {
     /** 在线 */
     if (isUserOnline(userid)) {
-      map.values()
-          .forEach(
-              info -> {
-                if (info.userid != null && info.userid.equals(messageBody.getReceiver())) {
-                  try {
-                    send(info.session, objectMapper.writeValueAsString(messageBody));
-                  } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                  }
-                }
-              });
+      List<Session> list =userOnlines.get(messageBody.getReceiver());
+      if(list!=null){
+        for (int i = 0; i <list.size() ; i++) {
+          if(null!=messageBody.getUrl()){
+            if(list.size()>=2){  // 这里操作当有同一用户从多个网页中登录 避免初始化和拉去好友信息多次发送
+              if(messageBody.getUrl().equals("init")&& i!=list.size()-1){
+                continue;
+              }
+              if(messageBody.getUrl().equals("findUseridRecordCustom")&& i!=list.size()-1){
+                continue;
+              }
+            }
+          }
+          send(list.get(i),objectMapper.writeValueAsString(messageBody));
+        }
+      }
     }
   }
 
@@ -149,15 +167,12 @@ public class RedisReceiver {
               if (!isUserOnline(user.getId())) {
                 return;
               }
-              map.values()
-                  .forEach(
-                      info -> {
-                        if (info.userid == user.getId()) {
-                          send(
-                              info.session,
-                              Result.of().put("type", status).put("userid", userid).toString());
-                        }
-                      });
+              List<Session> list =userOnlines.get(user.getId());
+              if(list!=null){
+                for (int i = 0; i <list.size() ; i++) {
+                  send(list.get(i), Result.of().put("type", status).put("userid", userid).toString());
+                }
+              }
             });
   }
 
@@ -171,25 +186,21 @@ public class RedisReceiver {
               if (!isUserOnline(user.getId())) {
                 return;
               }
-              map.values()
-                  .forEach(
-                      info -> {
-                        if (info != null
-                            && info.userid != null
-                            && info.userid.equals(user.getId())) {
-                          send(info.session, result.toString());
-                        }
-                      });
+              List<Session> list =userOnlines.get(user.getId());
+              if(list!=null){
+                for (int i = 0; i <list.size() ; i++) {
+                  send(list.get(i), result.toString());
+                }
+              }
             });
   }
 
-  @Scheduled(fixedRate = 100000) // 每隔多少秒执行1次
+  @Scheduled(fixedRate = 100) // 每隔多少秒执行1次
   public void refreshRedisOnlineInfo() {
     log.debug("刷新redis在线数据(仅限于单机服务器，集群环境下会出错)");
     stringRedisTemplate.delete("ONLINE");
-    for (SessionInfo value : map.values()) {
-      SessionInfo info = value;
-      stringRedisTemplate.opsForValue().setBit("ONLINE", info.userid, true);
+    for (Integer value : userOnlines.keySet()) {
+      stringRedisTemplate.opsForValue().setBit("ONLINE", value, true);
     }
   }
 

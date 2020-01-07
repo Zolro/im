@@ -3,6 +3,7 @@ package com.webim.im.module.dao.custom;
 import java.util.Date;
 import java.util.List;
 
+import com.webim.im.module.dao.custom.Views.UserRecordlist;
 import com.webim.im.module.dao.views.recordpageView;
 import com.webim.im.module.entity.Record;
 import com.webim.im.view.Page;
@@ -20,7 +21,7 @@ public interface RecordDaoCustom {
      * @Date 14:26 2019/8/13
      * @Param
      **/
-    Page findUseridRecordCustom(Integer userid, Integer start, Integer limit);
+    Page<UserRecordlist> findUseridRecordCustom(Integer userid, Integer start, Integer limit);
     /**
      * @Author zw
      * @Description  获取当前聊天对象的未读取的消息
