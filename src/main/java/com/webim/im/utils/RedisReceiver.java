@@ -293,4 +293,9 @@ public class RedisReceiver {
     } catch (IOException io) {
     }
   }
+  public  void  init(Integer userId){
+    if(userOnlines.get(userId)!=null){
+      receiveMessage(webuserServer.init(userId));
+    }
+  }
 }

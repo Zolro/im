@@ -112,8 +112,8 @@ public class WebSocketServer extends WebSession { // 每个人会分配一个独
             redisReceiver.receiveMessage(convertMessageMethod.getapplyfriendlist(map));
           }
           /** 添加到好友申请表 */
-          if (map.getUrl().equals("getfriedns")) {
-            redisReceiver.receiveMessage(convertMessageMethod.getfriedns(map));
+          if (map.getUrl().equals("getfriends")) {
+            redisReceiver.receiveMessage(convertMessageMethod.getfriends(map));
           }
           /** 修改好友申请表 添加到好友表中 */
           if (map.getUrl().equals("updApplyUser")) {

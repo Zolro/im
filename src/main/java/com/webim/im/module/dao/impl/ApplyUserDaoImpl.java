@@ -14,11 +14,12 @@ public class ApplyUserDaoImpl extends BaseRepository implements ApplyUserDaoCust
         QApplyUser applyUser=QApplyUser.applyUser;
         List<ApplyUserListView> list= new ArrayList<>();
                 queryFactory.select(applyUser.id,applyUser.status,
-                applyUser.createtime,applyUser.from.id,applyUser.from.username,applyUser.from.avatar,applyUser.type,applyUser.postscript)
-                .from(applyUser).where(applyUser.to.id.eq(userid)).fetch()
+                applyUser.createtime,applyUser.from.id,applyUser.state,applyUser.from.username,applyUser.from.avatar,applyUser.type,applyUser.postscript)
+                .from(applyUser).where(applyUser.fromId.eq(userid)).orderBy(applyUser.createtime.desc()).fetch()
                         .stream().forEach(tuple -> {
                     ApplyUserListView au=new ApplyUserListView();
                     au.setId(tuple.get(applyUser.id));
+                    au.setState(tuple.get(applyUser.state));
                     au.setStatus(tuple.get(applyUser.status));
                     au.setAvatar(tuple.get(applyUser.from.avatar));
                     au.setCreatetime(tuple.get(applyUser.createtime));
@@ -28,5 +29,11 @@ public class ApplyUserDaoImpl extends BaseRepository implements ApplyUserDaoCust
                     list.add(au);
                 });
         return list;
+    }
+
+    @Override
+    public Integer countApplyMsg(Integer id) {
+        QApplyUser bo=QApplyUser.applyUser;
+        return (int)queryFactory.selectFrom(bo).where(bo.from.id.eq(id)).where(bo.state.eq(false)).fetchCount();
     }
 }

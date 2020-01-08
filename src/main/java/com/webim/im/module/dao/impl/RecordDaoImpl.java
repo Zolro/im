@@ -102,15 +102,23 @@ public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
     @Override
     public recordpageView UserRecordPage(Integer fromid, Integer toid, Integer start, Integer limit, String slursearch, Date starttime) {
         QRecord record = QRecord.record;
-        Date first = queryFactory.select(record.created).from(record).where(record.from.id.eq(fromid)).where(record.to.id.eq(toid)).orderBy(record.created.asc()).fetch().get(0);
+        List<Date> listdate=queryFactory.select(record.created).from(record).where(record.from.id.eq(fromid)).where(record.to.id.eq(toid)).orderBy(record.created.asc()).fetch();
+        Date first =null;
+        if(listdate.size()>0){
+            first =listdate.get(0);
+        }
         List<Integer> listrecordId = queryFactory.select(record.id).from(record)
-                .where(record.from.id.eq(fromid))
-                .where(record.to.id.eq(toid))
+                .where(record.fromId.eq(fromid))
+                .where(record.toId.eq(toid))
                 .where(record.content.contains(slursearch))
-                .where(record.created.gt(starttime)).fetch();
+                .where(record.created.gt(starttime))
+                .fetch();
         recordpageView rpageView = new recordpageView();
         rpageView.setFirstdate(first);
         List<recordView> list = new ArrayList<>();
+        if(start==null&&!"".equals(start)){
+            start=(int)Math.ceil(listrecordId.size() / limit)*limit;
+        }
         queryFactory.select(record.id, record.created, record.type, record.state, record.content, record.from.id, record.to.id, record.issend)
                 .from(record)
                 .where(record.id.in(listrecordId)).orderBy(record.created.asc())

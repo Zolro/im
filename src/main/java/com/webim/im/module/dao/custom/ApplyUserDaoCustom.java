@@ -1,7 +1,9 @@
 package com.webim.im.module.dao.custom;
 
 import java.util.List;
+
 import com.webim.im.module.dao.custom.Views.ApplyUserListView;
+
 public interface ApplyUserDaoCustom {
     /**
      * @Author zw
@@ -10,4 +12,12 @@ public interface ApplyUserDaoCustom {
      * @Param
      **/
     List<ApplyUserListView> getapplyfriendlist(Integer userid);
+
+    /**
+     * @Author zw
+     * @Description 查看当前用户有多少条申请消息未处理
+     * @Date 10:37 2020/1/8
+     * @Param
+     **/
+    Integer countApplyMsg(Integer id);
 }

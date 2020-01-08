@@ -13,4 +13,6 @@ public class InitViews {
     String  sign;       // 用户个性签名
     Integer  status;    // 状态
     List<GroupfriendsList> list; //好友分组和好友列表
+    Integer chaeckNum; // 未查看的消息总数
+    Integer applyNum;  // 申请消息总数
 }

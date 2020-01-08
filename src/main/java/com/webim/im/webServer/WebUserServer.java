@@ -15,7 +15,7 @@ public interface WebUserServer {
    */
   MessageBody findUseridRecordCustom(Integer userid, Integer start, Integer limit);
   /** @Author zw @Description 添加好友 @Date 11:01 2019/8/28 @Param */
-  MessageBody getFriends(
+  MessageBody getfriends(
       Integer userid, Integer touserId, Integer groupiden, Integer type, String postscript);
 
   /** @Author zw @Description 查询根据名称模糊查询消息列表 @Date 15:52 2019/8/28 @Param */

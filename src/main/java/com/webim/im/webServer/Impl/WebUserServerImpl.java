@@ -2,6 +2,7 @@ package com.webim.im.webServer.Impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.webim.im.module.entity.User;
 import com.webim.im.module.server.UserServer;
 import com.webim.im.model.Enum.cmdEnum;
 import com.webim.im.model.Enum.msgtypeEnum;
@@ -39,11 +40,11 @@ public class WebUserServerImpl implements WebUserServer {
   }
 
   @Override
-  public MessageBody getFriends(
+  public MessageBody getfriends(
       Integer userid, Integer touserId, Integer groupiden, Integer type, String postscript) {
     return packagingulrpublic(
         getMethodName(),
-        convertObejctToString(userServer.getfriedns(userid, touserId, groupiden, type, postscript)),
+        convertObejctToString(userServer.getfriends(userid, touserId, groupiden, type, postscript)),
         userid);
   }
 
@@ -76,6 +77,19 @@ public class WebUserServerImpl implements WebUserServer {
 
   @Override
   public MessageBody getSSOIdUserAndRecord(Integer userid, Integer topic) {
+    User user= userServer.findById(userid);
+    if(user.getTopic().equals(topic)){
+      String obj = null;
+      try {
+        obj = objectMapper.writeValueAsString(Result.of(0, "不可和自己聊天", ""));
+        return packagingulrpublic(
+                getMethodName(),
+                obj,
+                userid);
+      } catch (JsonProcessingException e) {
+        e.printStackTrace();
+      }
+    }
     return packagingulrpublic(
         getMethodName(),
         convertObejctToStringTOResult(userServer.getSSOIdUserAndRecord(userid, topic)),

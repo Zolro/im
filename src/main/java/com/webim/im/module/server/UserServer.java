@@ -31,7 +31,7 @@ public interface UserServer {
     User updsign(Integer userid,String  sign);
 
     // 添加好友
-    Object getfriedns(Integer userid,Integer touserId,Integer groupiden,Integer type,String postscript);
+    Object getfriends(Integer userid,Integer touserId,Integer groupiden,Integer type,String postscript);
     User findByTopic(Integer userCenterID);
     // 获取用户列表
     List<UserViews> getuserlist(Integer userid);
@@ -105,5 +105,6 @@ public interface UserServer {
      * @Param
      **/
     Boolean UseridRecord(Integer userid, Integer friendid);
+    User findById(Integer id);
 
 }

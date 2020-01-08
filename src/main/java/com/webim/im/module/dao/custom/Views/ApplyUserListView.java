@@ -17,4 +17,5 @@ public class ApplyUserListView {
     private Integer type; //类型
     private String  postscript; // 附言
     private String  avatar;// 头像
+    private Boolean state;
 }

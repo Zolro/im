@@ -30,5 +30,7 @@ public interface ApplyUserDao  extends JpaRepository<ApplyUser,Integer>, ApplyUs
      * @Date 14:31 2019/8/30
      * @Param
      **/
-    ApplyUser findByFromAndTo(User from,User to);
+    ApplyUser findTopByFromIdAndToIdAndStatusOrderByCreatetimeDesc(Integer fromId,Integer toId,Integer status);
+
+    ApplyUser findById(Integer id);
 }

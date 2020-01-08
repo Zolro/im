@@ -12,5 +12,12 @@ public interface RecordDao extends JpaRepository<Record,Integer>, RecordDaoCusto
          * @Param
          **/
         Integer deleteByFromIdAndToId(Integer fromId,Integer toid);
+        /**
+         * @Author zw
+         * @Description 根据接收者 和未读取 查看当前用户未读取的消息总条数
+         * @Date 10:36 2020/1/8
+         * @Param
+         **/
+        Integer countByFromIdAndState(Integer toId,Boolean state);
 
 }

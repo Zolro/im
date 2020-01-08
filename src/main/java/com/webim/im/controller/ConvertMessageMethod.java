@@ -73,8 +73,6 @@ public class ConvertMessageMethod {
             messageBody1 =packageResult(messageBody.getReceiver(),0,"参数fromid不可为空");
         }else if(toid==null){
             messageBody1 =packageResult(messageBody.getReceiver(),0,"参数toid不可为空");
-        }else if(start==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"参数start不可为空");
         }else if(limit==null){
             messageBody1 =packageResult(messageBody.getReceiver(),0,"参数limit不可为空");
         }else if(starttime==null){
@@ -84,7 +82,10 @@ public class ConvertMessageMethod {
         }else{
             Integer fromidOP= Integer.valueOf(String.valueOf(fromid));
             Integer toidOP= Integer.valueOf(String.valueOf(toid));
-            Integer startOP= Integer.valueOf(String.valueOf(start));
+            Integer startOP=null;
+            if(start!=null){
+                startOP= Integer.valueOf(String.valueOf(start));
+            }
             Integer limitOP= Integer.valueOf(String.valueOf(limit));
             String  slursearchop= String.valueOf(slursearch);
             Date starttimeOP = null;
@@ -186,9 +187,7 @@ public class ConvertMessageMethod {
         Object start= mapOm.get("start");
         Object limit= mapOm.get("limit");
         MessageBody messageBody1=null;
-        if(start==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"参数start不可为空");
-        }else if(limit==null){
+         if(limit==null){
             messageBody1 =packageResult(messageBody.getReceiver(),0,"参数limit不可为空");
         }else{
             messageBody1= webUserServer.findUseridRecordCustom(Integer.valueOf(String.valueOf(userid)
@@ -278,7 +277,7 @@ public class ConvertMessageMethod {
         return messageBody1;
     }
     //  添加好友申请
-    public MessageBody getfriedns(MessageBody messageBody){
+    public MessageBody getfriends(MessageBody messageBody){
         Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
         Object formId= mapOm.get("formId");
         Object touserId= mapOm.get("touserId");
@@ -300,7 +299,7 @@ public class ConvertMessageMethod {
             Integer augroupiden=Integer.valueOf(String.valueOf(groupiden));
             Integer autype=Integer.valueOf(String.valueOf(type));
             String aupostscript=String.valueOf(postscript);
-            messageBody1= webUserServer.getFriends(auformId,autouserId,augroupiden,autype,aupostscript);
+            messageBody1= webUserServer.getfriends(auformId,autouserId,augroupiden,autype,aupostscript);
             messageBody1.setReceiver(messageBody.getReceiver());
         }
         return messageBody1;

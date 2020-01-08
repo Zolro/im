@@ -21,16 +21,20 @@ public class ApplyUser {
   @ManyToOne
   @JoinColumn(
       name = "`from`",
-      foreignKey = @ForeignKey(name = "none", value = ConstraintMode.NO_CONSTRAINT))
+      foreignKey = @ForeignKey(name = "none", value = ConstraintMode.NO_CONSTRAINT),
+          updatable = false, insertable = false)
   private User from;
-
+  @Column(name = "`from`")
+  private Integer fromId;
   @ManyToOne
   @JoinColumn(
       name = "`to`",
-      foreignKey = @ForeignKey(name = "none", value = ConstraintMode.NO_CONSTRAINT))
+      foreignKey = @ForeignKey(name = "none", value = ConstraintMode.NO_CONSTRAINT),
+          updatable = false, insertable = false)
   /** 接受者 》》》关联用户 */
   private User to;
-
+  @Column(name = "`to`")
+  private Integer toId;
   @ManyToOne
   @JoinColumn(
       name = "`groupiden`",
@@ -40,9 +44,13 @@ public class ApplyUser {
   @Column(name = "`type`")
   private Integer type; // 类型： 0好友 1群组 FriendsTypeEnum
 
-  @Column(nullable = true)
+  @Column()
   private String postscript; // 附言
 
-  @Column(nullable = true)
+  @Column()
   private String reply; // 回复
+  @Column()
+  private Boolean state;//是否已经读取过，true代表读取过，false代表未读
+  @Column()
+  private Boolean issend;// 判断是否是接受者 还是发送者 true 代表发送者 false代表接受者
 }

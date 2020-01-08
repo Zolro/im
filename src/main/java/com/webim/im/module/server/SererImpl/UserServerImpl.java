@@ -19,7 +19,6 @@ import com.webim.im.utils.Result;
 import com.webim.im.view.Page;
 import com.xinlianshiye.clouds.sso.common.resource.MemberResource;
 import com.xinlianshiye.clouds.sso.facade.model.Member;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -72,9 +71,13 @@ public class UserServerImpl implements UserServer {
         InitViews iv=new InitViews();
         //个人信息
         iv.setId(user.getId());
+        setXwtInfo(user);
         iv.setUsername(user.getUsername());
         iv.setAvatar(user.getAvatar());
         iv.setSign(user.getSign());
+        Integer applyNum=applyUserDao.countApplyMsg(userid);
+        iv.setChaeckNum(applyNum+recordDao.countByFromIdAndState(userid,false));
+        iv.setApplyNum(applyNum);
         iv.setStatus(redisReceiver.isUserOnline(user.getId())? UserEnum.ONLINE.ordinal():UserEnum.OFFLINE.ordinal());
         //friend分组信息
         List<Group> groups = groupDao.findByUser(user);
@@ -185,28 +188,46 @@ public class UserServerImpl implements UserServer {
     }
 
     @Override
-    public Object getfriedns(Integer userid,Integer touserId,Integer groupiden,Integer type,String postscript) {
+    public Object getfriends(Integer userid,Integer touserId,Integer groupiden,Integer type,String postscript) {
+
         ApplyUser au= new ApplyUser();
-        User fromuser = userDao.findOne(userid);
-        au.setFrom(fromuser);
-        User tous=  userDao.findOne(touserId);
+        User fromUser = userDao.findOne(userid);
+        User toUser=  userDao.findOne(touserId);
+        if(userid==touserId){
+            return Result.of(500,"不能添加自己为好友");
+        }
         // 判断申请好友是否已经是好友
-        if(friendsDao.existsByUserAndFriend(fromuser, tous)){
+        if(friendsDao.existsByUserAndFriend(fromUser, toUser)){
             return Result.of(500,"该好友已经是你好友了");
         }
         //判断申请好友是否已经申请了该好友
-        if(applyUserDao.existsByFromAndToAndAndStatus(fromuser, tous,FriendsEnum.waitapply.ordinal())){
+        if(applyUserDao.existsByFromAndToAndAndStatus(fromUser, toUser,FriendsEnum.waitapply.ordinal())){
             return Result.of(500,"已经申请了该好友");
         }
-        tous.setId(touserId);
-        au.setTo(tous);
+        au.setFromId(userid);
+        au.setToId(touserId);
+        au.setState(true);
+        au.setIssend(true);
         Group gp= groupDao.findOne(groupiden);
         au.setGroupiden(gp);
         au.setType(type);
         au.setPostscript(postscript);
         au.setStatus(FriendsEnum.waitapply.ordinal());
         au.setCreatetime(new Date());
-        applyUserDao.save(au);
+        au=applyUserDao.save(au);
+
+        ApplyUser toAu= new ApplyUser();
+        toAu.setFromId(touserId);
+        toAu.setToId(userid);
+        toAu.setState(false);
+        toAu.setIssend(false);
+        toAu.setGroupiden(gp);
+        toAu.setType(type);
+        toAu.setPostscript(postscript);
+        toAu.setStatus(FriendsEnum.waitapply.ordinal());
+        toAu.setCreatetime(new Date());
+        applyUserDao.save(toAu);
+        redisReceiver.init(touserId);
         return Result.of(200,"申请成功");
     }
 
@@ -233,6 +254,7 @@ public class UserServerImpl implements UserServer {
     public List<ApplyUserListView> getapplyfriendlist(Integer userid) {
         List<ApplyUserListView> getapplyfriendlist = applyUserDao.getapplyfriendlist(userid);
         getapplyfriendlist.stream().map(bean->{
+            setRead(bean);// 设置未已读
             User to= userDao.findById(bean.getFromid());
             Map map = getUserInfo(to.getTopic());
             if(map!=null){
@@ -253,27 +275,29 @@ public class UserServerImpl implements UserServer {
         applyUser.setStatus(state);
         applyUser.setReply(reply);
         ApplyUser au= applyUserDao.save(applyUser);
-        // 如果对方也同时申请了好友 需同时也修改对应的值
-        ApplyUser ObapplyUser=applyUserDao.findByFromAndTo(applyUser.getTo(),applyUser.getFrom());
+        ApplyUser ObapplyUser=applyUserDao.findTopByFromIdAndToIdAndStatusOrderByCreatetimeDesc(applyUser.getToId(),applyUser.getFromId(),0);
         if(ObapplyUser!=null){
             ObapplyUser.setStatus(state);
+            ObapplyUser.setReply(reply);
+            ObapplyUser.setState(false);
             applyUserDao.save(ObapplyUser);
         }
          // 给双方在好友表中添加对应的消息
         if(state==1){
             Friends friends=new Friends();
-            friends.setUser(applyUser.getFrom());
-            friends.setFriend(applyUser.getTo());
+            friends.setUser(applyUser.getTo());
+            friends.setFriend(applyUser.getFrom());
             Group formgroup=groupDao.findOne(applyUser.getGroupiden().getId());
             friends.setGroup(formgroup);
             friendsDao.save(friends);
             Friends friendsuser=new Friends();
-            friendsuser.setUser(applyUser.getTo());
-            friendsuser.setFriend(applyUser.getFrom());
+            friendsuser.setUser(applyUser.getFrom());
+            friendsuser.setFriend(applyUser.getTo());
             Group togroup=groupDao.findOne(groupid);
             friendsuser.setGroup(togroup);
             friendsDao.save(friendsuser);
         }
+        redisReceiver.init(applyUser.getTo().getId());
         return au;
     }
 
@@ -340,6 +364,7 @@ public class UserServerImpl implements UserServer {
         recordDao.deleteByFromIdAndToId(userid,friendid);
         applyUserDao.deleteByFromIdAndToId(userid,friendid);
         applyUserDao.deleteByFromIdAndToId(friendid,userid);
+        redisReceiver.init(friendid);
         return  true;
     }
 
@@ -352,6 +377,11 @@ public class UserServerImpl implements UserServer {
     public Boolean UseridRecord(Integer userid, Integer friendid) {
         recordDao.UseridRecord ( userid, friendid);
         return  true;
+    }
+
+    @Override
+    public User findById(Integer id) {
+        return userDao.findById(id);
     }
 
     private Member getSSOUserInfo(Integer topic){
@@ -374,6 +404,13 @@ public class UserServerImpl implements UserServer {
             if(avatar!=null){
                 temporaryUserinfo.setAvatar(avatar.toString());
             }
+        }
+    }
+    private void setRead(ApplyUserListView bean) {
+        if(bean.getState()==false){
+            ApplyUser user=applyUserDao.findById(bean.getId());
+            user.setState(true);
+            applyUserDao.save(user);
         }
     }
 }
