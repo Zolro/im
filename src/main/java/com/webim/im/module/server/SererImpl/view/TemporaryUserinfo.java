@@ -20,4 +20,5 @@ public class TemporaryUserinfo {
     String  sign;
     Integer  status;
     List<Record> list; //好友聊天记录
+    Boolean isFreind;// 判断该用户是不是当前用户的好友
 }

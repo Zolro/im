@@ -327,8 +327,11 @@ public class UserServerImpl implements UserServer {
         if(user ==null){
             Member map= getSSOUserInfo(topic);
             user=createtoUser(map.getId(),map.getNickname(),"","/public/upload/usr/supplier/f1a8b40c6b5ef347fd6e453eb1eae904.jpg");
+            temporaryUserinfo.setIsFreind(false);
         }else{
             temporaryUserinfo.setList(findUserRead(formuserid, topic));
+            User form= userDao.findById(formuserid);
+            temporaryUserinfo.setIsFreind(friendsDao.existsByUserAndFriend(form,user));
         }
         temporaryUserinfo.setId(user.getId());
         temporaryUserinfo.setSign(user.getSign());

@@ -150,6 +150,9 @@ public class RedisReceiver {
               if(messageBody.getUrl().equals("findUseridRecordCustom")&& i!=list.size()-1){
                 continue;
               }
+              if(messageBody.getUrl().equals("getSSOIdUserAndRecord")&& i!=list.size()-1){
+                continue;
+              }
             }
           }
           send(list.get(i),objectMapper.writeValueAsString(messageBody));
