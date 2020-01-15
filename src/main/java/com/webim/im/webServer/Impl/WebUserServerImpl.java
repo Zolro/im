@@ -105,11 +105,11 @@ public class WebUserServerImpl implements WebUserServer {
   }
 
   @Override
-  public MessageBody updApplyUser(
+  public MessageBody updApplyUser(Integer from,
       Integer applyuserid, Integer state, String reply, Integer groupid) {
     return packagingulrpublic(
         getMethodName(),
-        convertObejctToStringTOResult(userServer.updApplyUser(applyuserid, state, reply, groupid)));
+        convertObejctToStringTOResult(userServer.updApplyUser(applyuserid, state, reply, groupid)),from);
   }
 
   @Override
@@ -149,7 +149,7 @@ public class WebUserServerImpl implements WebUserServer {
       } catch (JsonProcessingException e) {
         e.printStackTrace();
       }
-      return packagingulrpublic(getMethodName(), obj);
+      return packagingulrpublic(getMethodName(), obj,userid);
     }
   }
 
@@ -166,6 +166,14 @@ public class WebUserServerImpl implements WebUserServer {
         convertObejctToStringTOResult(
             userServer.UserRecordPage(fromid, toid, start, limit, slursearch, starttime)),
         fromid);
+  }
+
+  @Override
+  public MessageBody pageNowRecord(Integer from, Integer to, Integer start, Integer limit) {
+    return packagingulrpublic(
+            getMethodName(),
+            convertObejctToStringTOResult(
+                    userServer.pageNowRecord(from,to,start,limit)),from);
   }
 
   @Override
@@ -193,16 +201,6 @@ public class WebUserServerImpl implements WebUserServer {
       e.printStackTrace();
     }
     return obj;
-  }
-
-  @Override
-  public MessageBody packagingulrpublic(String url, String content) {
-    MessageBody messageBody = new MessageBody();
-    messageBody.setMsgtype(msgtypeEnum.response.ordinal());
-    messageBody.setCmd(cmdEnum.httprequest.ordinal());
-    messageBody.setUrl(url);
-    messageBody.setContent(content);
-    return messageBody;
   }
   // 把对应的server方法返回的指 转换成 MessageBody  参数1 url 方法名称 参数2 返回结果 参数3 接受者ID
   @Override

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.webim.im.module.dao.BaseRepository;
 import com.webim.im.module.dao.custom.RecordDaoCustom;
@@ -14,6 +15,7 @@ import com.webim.im.module.entity.QFriends;
 import com.webim.im.module.entity.QRecord;
 import com.webim.im.module.entity.Record;
 import com.webim.im.module.entity.User;
+import com.webim.im.utils.DateTimeUtils;
 import com.webim.im.view.Page;
 
 public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
@@ -104,17 +106,33 @@ public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
         QRecord record = QRecord.record;
         List<Date> listdate=queryFactory.select(record.created).from(record).where(record.from.id.eq(fromid)).where(record.to.id.eq(toid)).orderBy(record.created.asc()).fetch();
         Date first =null;
+        Date end =null;
         if(listdate.size()>0){
             first =listdate.get(0);
+            end =listdate.get(listdate.size()-1);
+            end=DateTimeUtils.getTimesmorning(end);
         }
-        List<Integer> listrecordId = queryFactory.select(record.id).from(record)
+        JPAQuery<Integer> query=
+                queryFactory.select(record.id).from(record)
                 .where(record.fromId.eq(fromid))
-                .where(record.toId.eq(toid))
-                .where(record.content.contains(slursearch))
-                .where(record.created.gt(starttime))
-                .fetch();
+                .where(record.toId.eq(toid));
+        if(slursearch!=null&&!slursearch.equals("")){
+            query.where(record.content.contains(slursearch));
+            if(starttime!=null){
+                query.where(record.created.gt(starttime));
+            }
+        }else{
+            if(starttime!=null){
+                query.where(record.created.gt(starttime));
+            }
+            if(starttime==null){
+                query.where(record.created.gt(end));
+            }
+        }
+        List<Integer> listrecordId =query.fetch();
         recordpageView rpageView = new recordpageView();
         rpageView.setFirstdate(first);
+        rpageView.setEnddate(end);
         List<recordView> list = new ArrayList<>();
         if(start==null&&!"".equals(start)){
             start=(int)Math.ceil(listrecordId.size() / limit)*limit;
@@ -138,4 +156,36 @@ public class RecordDaoImpl extends BaseRepository implements RecordDaoCustom {
         rpageView.setPage(new Page(list, start, limit, listrecordId.size()));
         return rpageView;
     }
+
+    @Override
+    public Page pageNowRecord(Integer from, Integer to, Integer start, Integer limit) {
+        QRecord record = QRecord.record;
+        List<recordView> list = new ArrayList<>();
+        Integer count=new Long(queryFactory.selectFrom(record).where(record.fromId.eq(from)).where(record.toId.eq(to)).fetchCount()).intValue();
+        JPAQuery<Tuple> query= queryFactory.select(record.id, record.created, record.type, record.state, record.content, record.from.id, record.to.id, record.issend)
+                .from(record)
+                .where(record.fromId.eq(from))
+                .where(record.toId.eq(to))
+                .orderBy(record.created.asc());
+        if(count>0){
+            if(start==null){
+                start=count-3;
+            }
+            query.offset(start).limit(limit).fetch().forEach(tuple -> {
+                recordView rd = new recordView();
+                rd.setId(tuple.get(record.id));
+                rd.setBeforedate(tuple.get(record.created));
+                rd.setAfterdate(tuple.get(record.created));
+                rd.setIssend(tuple.get(record.issend));
+                rd.setType(tuple.get(record.type));
+                rd.setState(tuple.get(record.state));
+                rd.setContent(tuple.get(record.content));
+                rd.setFromId(tuple.get(record.from.id));
+                rd.setToId(tuple.get(record.to.id));
+                list.add(rd);
+            });
+        }
+        return new Page(list, start, limit, count);
+    }
+
 }

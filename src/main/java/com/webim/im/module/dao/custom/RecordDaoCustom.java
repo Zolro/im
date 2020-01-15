@@ -38,9 +38,17 @@ public interface RecordDaoCustom {
     void UseridRecord(Integer formuserid,Integer touserid);
     /**
      * @Author zw
-     * @Description   根据用户ID和好友ID 对聊天记录进行分页
+     * @Description   根据用户ID和好友ID 对历史聊天记录进行分页
      * @Date 14:00 2019/8/29
      * @Param
      **/
-    recordpageView UserRecordPage(Integer fromid, Integer toid, Integer start, Integer limit, String slursearch, Date starttime);
+    recordpageView UserRecordPage(Integer from, Integer to, Integer start, Integer limit, String slursearch, Date starttime);
+    /**
+     * @Author zw
+     * @Description 根据用户ID和好友ID 查询当前聊天记录
+     * @Date 14:40 2020/1/14
+     * @Param
+     **/
+    Page pageNowRecord(Integer from,Integer to,Integer start, Integer limit);
+
 }

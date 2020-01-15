@@ -28,79 +28,85 @@ public class ConvertMessageMethod {
     @Autowired
     WebUserServer webUserServer;
     public MessageBody init(MessageBody messageBody){
-        Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
-        Object userid= mapOm.get("userid");
-        MessageBody messageBody1=null;
-        if(userid!=null){
-            messageBody1= webUserServer.init(Integer.valueOf(String.valueOf(userid)));
+        Map<String,Object> map=convertObejctToMap(messageBody.getContent());
+        Integer user= getUserId(map);
+        MessageBody body=null;
+        if(user!=null){
+            body= webUserServer.init(user);
         }else{
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"参数userid不可为空");
+            body =packageResult(messageBody.getReceiver(),0,"参数userid不可为空");
         }
-        return messageBody1;
+        return body;
     }
 
     public MessageBody PingpongMap(MessageBody messageBody){
-        Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
-        Object ping= mapOm.get("ping");
-        Object userid= mapOm.get("userid");
-        MessageBody messageBody1=null;
+        Map<String,Object> map=convertObejctToMap(messageBody.getContent());
+        Object ping= map.get("ping");
+        Object userid= map.get("userid");
+        MessageBody body=null;
         if(ping=="ping"){
-            messageBody1=new MessageBody();
-            messageBody1.setMsgtype(msgtypeEnum.response.ordinal());
-            messageBody1.setCmd(cmdEnum.ping.ordinal());
-            messageBody1.setReceiver(Integer.valueOf(String.valueOf(userid)));
-            messageBody1.setUrl("PingpongMap");
-            messageBody1.setContent("pong");
+            body=new MessageBody();
+            body.setMsgtype(msgtypeEnum.response.ordinal());
+            body.setCmd(cmdEnum.ping.ordinal());
+            body.setReceiver(Integer.valueOf(String.valueOf(userid)));
+            body.setUrl("PingpongMap");
+            body.setContent("pong");
         }
-        return messageBody1;
+        return body;
     }
     /**
      * @Author zw
-     * @Description 好友聊天记录
+     * @Description 历史好友聊天记录
      * @Date 14:14 2019/8/29
      * @Param
      **/
     public MessageBody UserRecordPage(MessageBody messageBody){
-        Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
-        Object fromid= mapOm.get("fromid");
-        Object toid= mapOm.get("toid");
-        Object start= mapOm.get("start");
-        Object limit= mapOm.get("limit");
-        Object starttime= mapOm.get("starttime");
-        Object slursearch= mapOm.get("slursearch");
-        MessageBody messageBody1=null;
-        if(fromid==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"参数fromid不可为空");
-        }else if(toid==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"参数toid不可为空");
-        }else if(limit==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"参数limit不可为空");
-        }else if(starttime==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"参数starttime不可为空");
-        }else if(slursearch==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"参数slursearch不可为空");
+        Map<String,Object> map=convertObejctToMap(messageBody.getContent());
+        Integer from= getForm(map);
+        Integer to= getTo(map);
+        Integer start= getStart(map);
+        Integer limit= getLimit(map);
+        Object starttime= map.get("starttime");
+        Object slursearch= map.get("slursearch");
+        MessageBody body=null;
+        if(from==null||to==null||limit==null){
+            body =packageResult(messageBody.getReceiver(),0,"必传参数不可为空,<<fromid,toid,limit>>");
         }else{
-            Integer fromidOP= Integer.valueOf(String.valueOf(fromid));
-            Integer toidOP= Integer.valueOf(String.valueOf(toid));
-            Integer startOP=null;
-            if(start!=null){
-                startOP= Integer.valueOf(String.valueOf(start));
-            }
-            Integer limitOP= Integer.valueOf(String.valueOf(limit));
-            String  slursearchop= String.valueOf(slursearch);
             Date starttimeOP = null;
             //先将要格式化的字符串转为Date类型
-            try {
-                SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd");
-                starttimeOP = dateFormat.parse(String.valueOf(starttime));
-            } catch (ParseException e) {
-                e.printStackTrace();
+            if(starttime!=null){
+                try {
+                    SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd");
+                    starttimeOP = dateFormat.parse(String.valueOf(starttime));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
-            messageBody1= webUserServer.UserRecordPage(fromidOP,toidOP,startOP,limitOP,slursearchop,starttimeOP);
+            body= webUserServer.UserRecordPage(from,to,start,limit,slursearch.toString(),starttimeOP);
         }
-        return messageBody1;
+        return body;
     }
 
+    /**
+     * @Author zw
+     * @Description 当前好友聊天记录
+     * @Date 15:23 2020/1/14
+     * @Param
+     **/
+    public MessageBody pageNowRecord(MessageBody messageBody){
+        Map<String,Object> map=convertObejctToMap(messageBody.getContent());
+        Integer from = getForm(map);
+        Integer to= getTo(map);
+        Integer start=getStart(map);
+        Integer limit= getLimit(map);
+        MessageBody body=null;
+        if(from==null||to==null||limit==null){
+            body =packageResult(messageBody.getReceiver(),0,"必传参数不可为空,<<from，to，limit>>");
+        }else{
+            body= webUserServer.pageNowRecord(from,to,start,limit);
+        }
+        return  body;
+    }
     public MessageBody updsign(MessageBody messageBody){
         Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
         Object userid= mapOm.get("userid");
@@ -126,183 +132,161 @@ public class ConvertMessageMethod {
         return messageBody1;
     }
     public MessageBody delfriendAndRecord(MessageBody messageBody){
-        Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
-        Object userid= mapOm.get("userid");
-        Object friendid= mapOm.get("friendid");
-        MessageBody messageBody1=null;
-        if(userid==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"参数userid不可为空");
-        }else if(friendid==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"参数friendid不可为空");
+        Map<String,Object> map=convertObejctToMap(messageBody.getContent());
+        Integer user= getUserId(map);
+        Integer friend= getFriendId(map);
+        MessageBody body=null;
+        if(user==null||friend==null){
+            body =packageResult(messageBody.getReceiver(),0,"必传参数不可为空,,<<userid,friendid>>");
         }else {
-            messageBody1= webUserServer.delFriendAndRecord(Integer.valueOf(String.valueOf(userid)),Integer.valueOf(String.valueOf(friendid)));
+            body= webUserServer.delFriendAndRecord(user,friend);
         }
-        return messageBody1;
+        return body;
     }
 
 
     // 查询 不是本好友的所有用户列表
     public MessageBody getuserlist(MessageBody messageBody){
-        Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
-        Object userid= mapOm.get("userid");
-        MessageBody messageBody1=null;
-        if(userid!=null){
-            messageBody1= webUserServer.getUserList(Integer.valueOf(String.valueOf(userid)));
+        Map<String,Object> map=convertObejctToMap(messageBody.getContent());
+        Integer user= getUserId(map);
+        MessageBody body=null;
+        if(user!=null){
+            body= webUserServer.getUserList(user);
         }else{
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"参数userid不可为空");
+            body =packageResult(messageBody.getReceiver(),0,"参数userid不可为空");
         }
-        return messageBody1;
+        return body;
     }
     // 查询申请了好友的列表
     public MessageBody getapplyfriendlist(MessageBody messageBody){
-        Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
-        Object userid= mapOm.get("userid");
-        MessageBody messageBody1=null;
-        if(userid!=null){
-            messageBody1= webUserServer.getApplyFriendList(Integer.valueOf(String.valueOf(userid)));
+        Map<String,Object> map=convertObejctToMap(messageBody.getContent());
+        Integer user= getUserId(map);
+        MessageBody body=null;
+        if(user!=null){
+            body= webUserServer.getApplyFriendList(user);
         }else{
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"userid不可为空");
+            body =packageResult(messageBody.getReceiver(),0,"参数userid不可为空");
         }
-        return messageBody1;
+        return body;
     }
     public MessageBody findUserRead(MessageBody messageBody){
-        Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
-        Object formuserid= mapOm.get("formuserid");
-        Object touserid= mapOm.get("touserid");
-        MessageBody messageBody1=null;
-        if(formuserid==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"参数formuserid不可为空");
-        }else if(touserid==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"参数touserid不可为空");
+        Map<String,Object> map=convertObejctToMap(messageBody.getContent());
+        Object form= map.get("formuserid");
+        Object to= map.get("touserid");
+        MessageBody body=null;
+        if(form==null){
+            body =packageResult(messageBody.getReceiver(),0,"参数formuserid不可为空");
+        }else if(to==null){
+            body =packageResult(messageBody.getReceiver(),0,"参数touserid不可为空");
         }else{
-            messageBody1= webUserServer.findUserRead(Integer.valueOf(String.valueOf(formuserid)
-                    ),Integer.valueOf(String.valueOf(touserid)));
+            body= webUserServer.findUserRead(Integer.valueOf(String.valueOf(form)
+                    ),Integer.valueOf(String.valueOf(to)));
         }
-        return messageBody1;
+        return body;
     }
     // 根据用户id 显示用户好友聊天列表     根据是否读取过 排序 未读取优先级高  好友分组 取最新一条数据  有几条未查阅的信息
     public MessageBody findUseridRecordCustom(MessageBody messageBody){
-        Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
-        Object userid= mapOm.get("userid");
-        Object start= mapOm.get("start");
-        Object limit= mapOm.get("limit");
-        MessageBody messageBody1=null;
+        Map<String,Object> map=convertObejctToMap(messageBody.getContent());
+        Integer userid= getUserId(map);
+        Integer start= getStart(map);
+        Integer limit= getLimit(map);
+        MessageBody body=null;
          if(limit==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"参数limit不可为空");
+             body =packageResult(messageBody.getReceiver(),0,"参数limit不可为空");
         }else{
-            messageBody1= webUserServer.findUseridRecordCustom(Integer.valueOf(String.valueOf(userid)
-            ),Integer.valueOf(String.valueOf(start)),Integer.valueOf(String.valueOf(limit)));
+             body= webUserServer.findUseridRecordCustom(userid,start,limit);
         }
-        return messageBody1;
+        return body;
     }
 
     public MessageBody getlistUserName(MessageBody messageBody){
-        Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
-        Object userid= mapOm.get("userid");
-        Object username= mapOm.get("name");
-        MessageBody messageBody1=null;
-        if(userid==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"userid不可为空");
-        }else if(username==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"name不可为空");
+        Map<String,Object> map=convertObejctToMap(messageBody.getContent());
+        Integer userid= getUserId(map);
+        Object username= map.get("name");
+        MessageBody body=null;
+        if(userid==null||username==null){
+            body =packageResult(messageBody.getReceiver(),0,"必传参数不可为空,<<userid,name>>");
         }else{
-            messageBody1= webUserServer.getListUserName(Integer.valueOf(String.valueOf(userid)),String.valueOf(username));
+            body= webUserServer.getListUserName(userid,String.valueOf(username));
         }
-        return messageBody1;
+        return body;
     }
     public MessageBody delmsglistInfo(MessageBody messageBody) {
-        Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
-        Object fromid= mapOm.get("fromid");
-        Object recordid= mapOm.get("recordid");
-        MessageBody messageBody1=null;
-        if(fromid==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"fromid不可为空");
-        }else if(recordid==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"recordid不可为空");
+        Map<String,Object> map=convertObejctToMap(messageBody.getContent());
+        Integer form= getForm(map);
+        Object recordid= map.get("recordid");
+        MessageBody body=null;
+        if(form==null||recordid==null){
+            body =packageResult(messageBody.getReceiver(),0," 必传参数不可为空，<<fromid，recordid>>");
         }else{
-            messageBody1= webUserServer.delMsgListInfo(Integer.valueOf(String.valueOf(fromid)),Integer.valueOf(String.valueOf(recordid)));
+            body= webUserServer.delMsgListInfo(form,Integer.valueOf(String.valueOf(recordid)));
         }
-        return messageBody1;
+        return body;
     }
     public MessageBody UseridRecord(MessageBody messageBody){
-        Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
-        Object userid= mapOm.get("userid");
-        Object friendid= mapOm.get("friendid");
-        MessageBody messageBody1=null;
-        if(userid==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"userid不可为空");
-        }else if(friendid==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"friendid不可为空");
+        Map<String,Object> map=convertObejctToMap(messageBody.getContent());
+        Integer user= getUserId(map);
+        Integer friend= getFriendId(map);
+        MessageBody body=null;
+        if(user==null||friend==null){
+            body =packageResult(messageBody.getReceiver(),0,"必传参数不可为空，<<userid，friendid>>");
         }else{
-            messageBody1= webUserServer.UseridRecord(Integer.valueOf(String.valueOf(userid)),Integer.valueOf(String.valueOf(friendid)));
+            body= webUserServer.UseridRecord(user,friend);
         }
-        return messageBody1;
+        return body;
     }
     public MessageBody getlistUserNamefriend(MessageBody messageBody){
-        Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
-        Object userid= mapOm.get("userid");
-        Object username= mapOm.get("name");
-        MessageBody messageBody1=null;
-        if(userid==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"userid不可为空");
-        }else if(username==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"name不可为空");
+        Map<String,Object> map=convertObejctToMap(messageBody.getContent());
+        Integer user=getUserId(map);
+        Object username= map.get("name");
+        MessageBody body=null;
+        if(user==null||username==null){
+            body =packageResult(messageBody.getReceiver(),0,"必传参数不可为空，<<userid，name>>");
         }else{
-            messageBody1= webUserServer.getListUserNameFriend(Integer.valueOf(String.valueOf(userid)),String.valueOf(username));
+            body= webUserServer.getListUserNameFriend(user,String.valueOf(username));
         }
-        return messageBody1;
+        return body;
     }
 
     public  MessageBody updApplyUser(MessageBody messageBody){
-        Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
-        Object applyuserid= mapOm.get("applyuserid");
-        Object state= mapOm.get("state");
-        Object reply= mapOm.get("reply");
-        Object groupid= mapOm.get("groupid");
-        MessageBody messageBody1=null;
-        if(applyuserid==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"applyuserid不可为空");
-        }else if(state==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"stateId");
-        }else if(groupid==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"groupid不可为空");
+        Map<String,Object> map=convertObejctToMap(messageBody.getContent());
+        Object applyuserid= map.get("applyuserid");
+        Object state= map.get("state");
+        Object reply= map.get("reply");
+        Object groupid= map.get("groupid");
+        Integer from= getForm(map);
+        MessageBody body=null;
+        if(applyuserid==null||state==null||groupid==null){
+            body =packageResult(messageBody.getReceiver(),0,"必传参数不可为空，<<applyuserid，stateId,groupid>>");
         }else{
             Integer auapplyuserid=Integer.valueOf(String.valueOf(applyuserid));
             Integer austate=Integer.valueOf(String.valueOf(state));
             String aureply=String.valueOf(reply);
             Integer augroupid=Integer.valueOf(String.valueOf(groupid));
-            messageBody1= webUserServer.updApplyUser(auapplyuserid,austate,aureply,augroupid);
-            messageBody1.setReceiver(messageBody.getReceiver());
+            body= webUserServer.updApplyUser(from,auapplyuserid,austate,aureply,augroupid);
+            body.setReceiver(messageBody.getReceiver());
         }
-        return messageBody1;
+        return body;
     }
     //  添加好友申请
     public MessageBody getfriends(MessageBody messageBody){
-        Map<String,Object> mapOm=convertObejctToMap(messageBody.getContent());
-        Object formId= mapOm.get("formId");
-        Object touserId= mapOm.get("touserId");
-        Object groupiden= mapOm.get("groupiden");
-        Object type= mapOm.get("type");
-        Object postscript= mapOm.get("postscript");
-        MessageBody messageBody1=null;
-        if(formId==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"formId不可为空");
-        }else if(touserId==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"touserId");
-        }else if(groupiden==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"groupiden不可为空");
-        }else if(type==null){
-            messageBody1 =packageResult(messageBody.getReceiver(),0,"type不可为空");
+        Map<String,Object> map=convertObejctToMap(messageBody.getContent());
+        Integer formId= getForm(map);
+        Object touserId= map.get("touserId");
+        Object groupiden= map.get("groupiden");
+        Object type= map.get("type");
+        Object postscript= map.get("postscript");
+        MessageBody body=null;
+        if(formId==null||touserId==null||groupiden==null||type==null){
+            body =packageResult(messageBody.getReceiver(),0,"必传参数不可为空，<<formId，touserId,groupiden,type>>");
         }else{
-            Integer auformId=Integer.valueOf(String.valueOf(formId));
             Integer autouserId=Integer.valueOf(String.valueOf(touserId));
             Integer augroupiden=Integer.valueOf(String.valueOf(groupiden));
             Integer autype=Integer.valueOf(String.valueOf(type));
-            String aupostscript=String.valueOf(postscript);
-            messageBody1= webUserServer.getfriends(auformId,autouserId,augroupiden,autype,aupostscript);
-            messageBody1.setReceiver(messageBody.getReceiver());
+            body= webUserServer.getfriends(formId,autouserId,augroupiden,autype,String.valueOf(postscript));
+            body.setReceiver(messageBody.getReceiver());
         }
-        return messageBody1;
+        return body;
     }
     //  返回结果抽出  receiverid 接受者ID  code 返回状态码  msg 返回消息
     private MessageBody packageResult(Integer receiverid,Integer code,String msg){
@@ -310,17 +294,6 @@ public class ConvertMessageMethod {
         String data=webUserServer.convertObejctToString( Result.of(code,msg)) ;
         Integer receiver=receiverid;
         return  webUserServer.packagingulrpublic(name,data,receiver);
-    }
-
-    // 把消息转换成Map
-    private  Map<String,Object>  convertToMap(MessageBody messageBody ){
-        Map<String,Object> obj=null;
-        try {
-            obj=objectMapper.readValue(messageBody.getContent(), Map.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return obj;
     }
     // 把对象转换成Map
     private  Map<String,Object>  convertObejctToMap(String object ){
@@ -333,23 +306,55 @@ public class ConvertMessageMethod {
         return obj;
     }
     // 把字符串转换成消息体
-    private  MessageBody convertToMessage(String  object){
-        MessageBody obj=null;
-        try {
-            obj=objectMapper.readValue(object,MessageBody.class);
-        } catch (IOException e) {
-            e.printStackTrace();
+
+
+    private  Integer  getFriendId(Map<String,Object> map){
+        Object friend= map.get("friendid");
+        Integer value=null;
+        if(friend!=null){
+            value= Integer.valueOf(String.valueOf(friend));
         }
-        return obj;
+        return value;
     }
-    private Object convertStringToObject(String object){
-        Object ob=null;
-        try {
-            ob= objectMapper.readValue(object,Object.class);
-        } catch (IOException e) {
-            e.printStackTrace();
+    private  Integer  getUserId(Map<String,Object> map){
+        Object user= map.get("userid");
+        Integer value=null;
+        if(user!=null){
+            value= Integer.valueOf(String.valueOf(user));
         }
-        return  ob;
+        return value;
+    }
+    private  Integer  getForm(Map<String,Object> map){
+        Object from= map.get("fromid");
+        Integer value=null;
+        if(from!=null){
+            value= Integer.valueOf(String.valueOf(from));
+        }
+        return value;
+    }
+    private  Integer  getTo(Map<String,Object> map){
+        Object to= map.get("toid");
+        Integer value=null;
+        if(to!=null){
+            value= Integer.valueOf(String.valueOf(to));
+        }
+        return value;
+    }
+    private  Integer  getLimit(Map<String,Object> map){
+        Object limit= map.get("limit");
+        Integer value=null;
+        if(limit!=null){
+            value= Integer.valueOf(String.valueOf(limit));
+        }
+        return value;
+    }
+    private  Integer  getStart(Map<String,Object> map){
+        Object start= map.get("start");
+        Integer value=null;
+        if(start!=null){
+            value= Integer.valueOf(String.valueOf(start));
+        }
+        return value;
     }
 
 }

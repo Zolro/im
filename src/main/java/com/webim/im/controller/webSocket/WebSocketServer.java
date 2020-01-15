@@ -104,59 +104,64 @@ public class WebSocketServer extends WebSession { // 每个人会分配一个独
             redisReceiver.receiveMessage(convertMessageMethod.init(map));
           }
           /** 测试用来 查看所有用户的 无用方法 */
-          if (map.getUrl().equals("getuserlist")) {
+          if (map.getUrl().equalsIgnoreCase("getuserlist")) {
             redisReceiver.receiveMessage(convertMessageMethod.getuserlist(map));
           }
           /** 获取好友申请列表 */
-          if (map.getUrl().equals("getapplyfriendlist")) {
+          if (map.getUrl().equalsIgnoreCase("getapplyfriendlist")) {
             redisReceiver.receiveMessage(convertMessageMethod.getapplyfriendlist(map));
           }
           /** 添加到好友申请表 */
-          if (map.getUrl().equals("getfriends")) {
+          if (map.getUrl().equalsIgnoreCase("getfriends")) {
             redisReceiver.receiveMessage(convertMessageMethod.getfriends(map));
           }
           /** 修改好友申请表 添加到好友表中 */
-          if (map.getUrl().equals("updApplyUser")) {
+          if (map.getUrl().equalsIgnoreCase("updApplyUser")) {
             redisReceiver.receiveMessage(convertMessageMethod.updApplyUser(map));
           }
           /** 获取当前聊天对象的未读取的消息 并修改成已读状态 */
-          if (map.getUrl().equals("findUserRead")) {
+          if (map.getUrl().equalsIgnoreCase("findUserRead")) {
             redisReceiver.receiveMessage(convertMessageMethod.findUserRead(map));
           }
           /** 根据用户id 显示用户好友聊天列表 */
-          if (map.getUrl().equals("findUseridRecordCustom")) {
+          if (map.getUrl().equalsIgnoreCase("findUseridRecordCustom")) {
             redisReceiver.receiveMessage(convertMessageMethod.findUseridRecordCustom(map));
           }
           /** 根据用户id 修改个性签名 */
-          if (map.getUrl().equals("updsign")) {
+          if (map.getUrl().equalsIgnoreCase("updsign")) {
             redisReceiver.receiveMessage(convertMessageMethod.updsign(map));
           }
           /** 单击 用户Id 去SSO ID 获取用户信息 以及和对应的聊天记录 */
-          if (map.getUrl().equals("getSSOIdUserAndRecord")) {
+          if (map.getUrl().equalsIgnoreCase("getSSOIdUserAndRecord")) {
             redisReceiver.receiveMessage(convertMessageMethod.getSSOIdUserAndRecord(map));
           }
           /** 查询根据名称模糊查询消息列表 */
-          if (map.getUrl().equals("getlistUserName")) {
+          if (map.getUrl().equalsIgnoreCase("getlistUserName")) {
             redisReceiver.receiveMessage(convertMessageMethod.getlistUserName(map));
           }
           /** 查询根据名称模糊查询好友列表 */
-          if (map.getUrl().equals("getlistUserNamefriend")) {
+          if (map.getUrl().equalsIgnoreCase("getlistUserNamefriend")) {
             redisReceiver.receiveMessage(convertMessageMethod.getlistUserNamefriend(map));
           }
           /** 删除好友 */
-          if (map.getUrl().equals("delfriendAndRecord")) {
+          if (map.getUrl().equalsIgnoreCase("delfriendAndRecord")) {
             redisReceiver.receiveMessage(convertMessageMethod.delfriendAndRecord(map));
           }
-          /** 好友聊天记录 */
-          if (map.getUrl().equals("UserRecordPage")) {
+          /** 历史好友聊天记录 */
+          if (map.getUrl().equalsIgnoreCase("UserRecordPage")) {
             redisReceiver.receiveMessage(convertMessageMethod.UserRecordPage(map));
           }
+          /** 当前好友聊天记录 */
+          if (map.getUrl().equalsIgnoreCase("pageNowRecord")) {
+            redisReceiver.receiveMessage(convertMessageMethod.pageNowRecord(map));
+          }
+
           /** 删除好友消息后 下次刷新不在出现在列表中 */
-          if (map.getUrl().equals("delmsglistInfo")) {
+          if (map.getUrl().equalsIgnoreCase("delMsgListInfo")) {
             redisReceiver.receiveMessage(convertMessageMethod.delmsglistInfo(map));
           }
           /** 删除好友消息后 下次刷新不在出现在列表中 */
-          if (map.getUrl().equals("UseridRecord")) {
+          if (map.getUrl().equalsIgnoreCase("UseridRecord")) {
             redisReceiver.receiveMessage(convertMessageMethod.UseridRecord(map));
           }
         }

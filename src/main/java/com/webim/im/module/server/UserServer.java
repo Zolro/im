@@ -106,5 +106,6 @@ public interface UserServer {
      **/
     Boolean UseridRecord(Integer userid, Integer friendid);
     User findById(Integer id);
+    Page pageNowRecord(Integer from, Integer to, Integer start, Integer limit);
 
 }

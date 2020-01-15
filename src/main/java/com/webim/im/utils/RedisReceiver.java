@@ -15,6 +15,7 @@ import com.webim.im.webServer.WebUserServer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -112,11 +113,6 @@ public class RedisReceiver {
   public boolean isUserOnline(Integer userid) {
     return stringRedisTemplate.opsForValue().getBit("ONLINE", userid);
   }
-//  // 判断该用户id 是否在线
-//  public boolean isUserOnline(Integer userid, Session session) {
-//    return stringRedisTemplate.opsForValue().getBit("ONLINE", userid);
-//  }
-
   /** 接收消息的方法 */
   public void receiveMessage(String message) {
     System.err.println("收到一条消息：" + message);

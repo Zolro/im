@@ -387,6 +387,11 @@ public class UserServerImpl implements UserServer {
         return userDao.findById(id);
     }
 
+    @Override
+    public Page pageNowRecord(Integer from, Integer to, Integer start, Integer limit) {
+        return recordDao.pageNowRecord(from,to,start,limit);
+    }
+
     private Member getSSOUserInfo(Integer topic){
         return new MemberResource(ssoDomain).fetchMember(topic.toString(), null);
     }
